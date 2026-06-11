@@ -3,7 +3,7 @@ import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { randomBytes } from "node:crypto";
 import bcrypt from "bcryptjs";
 import { db } from "./db";
-import * as schema from "../../drizzle/schema";
+import { users, sessions, account, verification } from "../../drizzle/schema";
 
 const baseURL =
   process.env.BETTER_AUTH_URL
@@ -15,15 +15,13 @@ export const auth = betterAuth({
   database: drizzleAdapter(db, {
     provider: "sqlite",
     schema: {
-      user: schema.users,
-      session: schema.sessions,
-      account: schema.account,
-      verification: schema.verification,
+      user: users,
+      session: sessions,
+      account,
+      verification,
     },
-    usePlural: false,
   }),
   user: {
-    modelName: "users",
     fields: {
       name: "displayName",
     },
@@ -32,12 +30,9 @@ export const auth = betterAuth({
     },
   },
   session: {
-    modelName: "sessions",
     expiresIn: 60 * 60 * 24 * 30, // 30 days
     cookieCache: { enabled: true, maxAge: 5 * 60 },
   },
-  account: { modelName: "account" },
-  verification: { modelName: "verification" },
   emailAndPassword: {
     enabled: true,
     minPasswordLength: 12,

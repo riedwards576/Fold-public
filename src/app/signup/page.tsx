@@ -1,4 +1,4 @@
-import { headers } from "next/headers";
+import { headers, cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import Link from "next/link";
 import { auth } from "@/lib/better-auth";
@@ -26,13 +26,34 @@ export default async function SignupPage({
     if (password.length < 12) redirect("/signup?error=short");
 
     try {
-      await auth.api.signUpEmail({
+      const response = await auth.api.signUpEmail({
         body: { email, password, name: displayName },
         headers: await headers(),
+        asResponse: true,
       });
+      const cookieStore = await cookies();
+      for (const cookie of response.headers.getSetCookie()) {
+        const [nameVal, ...parts] = cookie.split("; ");
+        const eqIdx = nameVal.indexOf("=");
+        const name = nameVal.slice(0, eqIdx);
+        const value = nameVal.slice(eqIdx + 1);
+        const opts: Record<string, string | boolean | number> = {};
+        for (const p of parts) {
+          const [k, v] = p.split("=");
+          opts[k.toLowerCase()] = v ?? true;
+        }
+        cookieStore.set(name, value, {
+          httpOnly: true,
+          secure: opts.secure === true,
+          sameSite: (opts.samesite as "lax" | "strict" | "none") ?? "lax",
+          maxAge: opts["max-age"] ? Number(opts["max-age"]) : undefined,
+          path: (opts.path as string) ?? "/",
+        });
+      }
     } catch (err) {
       const message = err instanceof Error ? err.message : "";
       if (/already exists|user.*exists/i.test(message)) redirect("/signup?error=taken");
+      console.error("[signup error]", err);
       redirect("/signup?error=missing");
     }
     redirect("/");
