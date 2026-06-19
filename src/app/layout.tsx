@@ -10,7 +10,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
   const user = await getCurrentUser();
 
   return (
-    <html lang="en">
+    <html lang="en" className="dark">
       <body>
         <div className="min-h-screen flex flex-col">
           {user && (
