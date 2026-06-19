@@ -7,7 +7,7 @@ export default function HelpPage() {
     <div className="max-w-3xl mx-auto px-4 py-8 space-y-8">
       <header>
         <h1 className="text-2xl font-semibold">Help & FAQ</h1>
-        <p className="text-sm text-black/60 mt-1">
+        <p className="text-sm text-black/60 dark:text-white/60 mt-1">
           How Fold works, what each page does, and what to do when something looks weird.
         </p>
       </header>
@@ -73,7 +73,7 @@ export default function HelpPage() {
           attendees, and brand-new students. The charts show attendance trends, the engagement
           funnel by stage, and demographic breakdowns.
         </p>
-        <p className="text-xs text-black/60">
+        <p className="text-xs text-black/60 dark:text-white/60">
           If a chart looks empty, you usually just need more data — most aggregates need 3+
           events to mean anything.
         </p>
@@ -143,7 +143,7 @@ export default function HelpPage() {
       </Section>
 
       <Section id="rides" title="Rides & carpools">
-        <p className="text-black/80">
+        <p className="text-black/80 dark:text-white/80">
           Rides is the page most people get confused on, so here&apos;s the model:
         </p>
         <div className="space-y-2">
@@ -182,7 +182,7 @@ export default function HelpPage() {
           opposite gender. Turn it off if your group doesn&apos;t care about that. The toggle
           only affects the solver&apos;s suggestions; you can always override by hand.
         </p>
-        <p className="text-xs text-black/60">
+        <p className="text-xs text-black/60 dark:text-white/60">
           The solver also flags warnings (over-capacity, unassigned riders) on the preview
           screen — read them before you commit.
         </p>
@@ -198,7 +198,7 @@ export default function HelpPage() {
           <li>&quot;all freshmen who were invited by someone&quot;</li>
           <li>&quot;female members who haven&apos;t been contacted via IG&quot;</li>
         </ul>
-        <p className="text-xs text-black/60">
+        <p className="text-xs text-black/60 dark:text-white/60">
           Under the hood, Claude turns your question into a structured filter and the server
           runs it as safe parameterized SQL. If a result looks wrong, try rephrasing — the
           filter Claude built is shown above the table so you can see how it interpreted you.
@@ -217,7 +217,7 @@ export default function HelpPage() {
           <li>Cites bucket sizes so you can see when the signal is weak.</li>
           <li>Hit <em>regenerate</em> to ask again; results vary slightly each time.</li>
         </ul>
-        <p className="text-xs text-black/60">
+        <p className="text-xs text-black/60 dark:text-white/60">
           The food / on-campus / month flags are heuristic regex inferences on event names, not
           hard data. Treat Insights as starting hypotheses, not conclusions.
         </p>
@@ -350,7 +350,7 @@ function Faq({ q, children }: { q: string; children: React.ReactNode }) {
   return (
     <details className="rounded-md border border-black/10 dark:border-white/10 p-3 text-sm group">
       <summary className="font-medium cursor-pointer list-none flex items-start gap-2">
-        <span className="text-black/40 group-open:rotate-90 transition-transform">›</span>
+        <span className="text-black/40 dark:text-white/40 group-open:rotate-90 transition-transform">›</span>
         <span>{q}</span>
       </summary>
       <div className="mt-2 pl-5 text-black/70 dark:text-white/70">{children}</div>

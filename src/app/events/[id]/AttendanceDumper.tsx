@@ -105,7 +105,7 @@ export default function AttendanceDumper({ eventId }: { eventId: number }) {
 
       {parsed && (
         <div className="space-y-3 pt-2 border-t border-black/5 dark:border-white/10">
-          {explanation && <p className="text-sm text-black/60 italic">{explanation}</p>}
+          {explanation && <p className="text-sm text-black/60 dark:text-white/60 italic">{explanation}</p>}
           <div className="space-y-2">
             {parsed.map((p, i) => (
               <div key={i} className="rounded-lg border border-black/10 dark:border-white/10 p-3 space-y-2">
@@ -117,10 +117,10 @@ export default function AttendanceDumper({ eventId }: { eventId: number }) {
                     <span className="font-medium">
                       {p.match === "existing"
                         ? p._existingName ?? `Student #${p.studentId}`
-                        : `${p.firstName ?? ""} ${p.lastName ?? ""}`.trim() || <em className="text-black/40">unnamed</em>}
+                        : `${p.firstName ?? ""} ${p.lastName ?? ""}`.trim() || <em className="text-black/40 dark:text-white/40">unnamed</em>}
                     </span>
                   </div>
-                  <button onClick={() => remove(i)} className="text-xs text-black/40 hover:text-red-600">
+                  <button onClick={() => remove(i)} className="text-xs text-black/40 dark:text-white/40 hover:text-red-600">
                     drop
                   </button>
                 </div>
@@ -163,8 +163,8 @@ export default function AttendanceDumper({ eventId }: { eventId: number }) {
                     />
                   </div>
                 )}
-                {p.notes && <p className="text-xs text-black/50">note: {p.notes}</p>}
-                <p className="text-[11px] text-black/30">from: "{p.rawText}"</p>
+                {p.notes && <p className="text-xs text-black/50 dark:text-white/50">note: {p.notes}</p>}
+                <p className="text-[11px] text-black/30 dark:text-white/30">from: "{p.rawText}"</p>
               </div>
             ))}
           </div>

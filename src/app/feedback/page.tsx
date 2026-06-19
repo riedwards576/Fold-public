@@ -65,7 +65,7 @@ export default async function FeedbackPage({
     <div className="max-w-3xl mx-auto px-4 py-8 space-y-6">
       <div>
         <h1 className="text-2xl font-semibold">Questions & feedback</h1>
-        <p className="text-sm text-black/60">
+        <p className="text-sm text-black/60 dark:text-white/60">
           Spotted a bug? Idea for a feature? Confusing flow? Drop a note. Other leaders can see these too.
         </p>
       </div>
@@ -105,7 +105,7 @@ export default async function FeedbackPage({
       <section className="space-y-3">
         <h2 className="font-semibold">Recent ({total})</h2>
         {recent.length === 0 ? (
-          <p className="text-sm text-black/50">No feedback yet. Be the first.</p>
+          <p className="text-sm text-black/50 dark:text-white/50">No feedback yet. Be the first.</p>
         ) : (
           <>
           <ul className="space-y-2">
@@ -117,13 +117,13 @@ export default async function FeedbackPage({
                     {r.page && <span className="ml-2 chip">{r.page}</span>}
                   </div>
                   <div className="flex items-center gap-2">
-                    <time className="text-xs text-black/50">
+                    <time className="text-xs text-black/50 dark:text-white/50">
                       {new Date(r.createdAt).toLocaleString()}
                     </time>
                     {r.authorId === me.id && (
                       <form action={del}>
                         <input type="hidden" name="id" value={r.id} />
-                        <button type="submit" className="text-xs text-black/40 hover:text-red-600">delete</button>
+                        <button type="submit" className="text-xs text-black/40 dark:text-white/40 hover:text-red-600">delete</button>
                       </form>
                     )}
                   </div>
@@ -134,7 +134,7 @@ export default async function FeedbackPage({
           </ul>
           {totalPages > 1 && (
             <nav className="flex items-center justify-between text-sm">
-              <span className="text-black/60">
+              <span className="text-black/60 dark:text-white/60">
                 Page {pageNum} of {totalPages}
               </span>
               <div className="flex gap-2">

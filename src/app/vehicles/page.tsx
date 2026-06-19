@@ -22,9 +22,9 @@ export default async function VehiclesPage() {
     <div className="max-w-4xl mx-auto px-4 py-8 space-y-6">
       <div className="flex items-baseline justify-between">
         <h1 className="text-2xl font-semibold tracking-tight">Vehicles</h1>
-        <span className="text-sm text-black/60">{rows.length} total</span>
+        <span className="text-sm text-black/60 dark:text-white/60">{rows.length} total</span>
       </div>
-      <p className="text-sm text-black/60">
+      <p className="text-sm text-black/60 dark:text-white/60">
         Capacity includes the driver seat. A 7-seat minivan = capacity 7.
       </p>
 
@@ -34,11 +34,11 @@ export default async function VehiclesPage() {
       >
         <div>
           <div className="font-medium">Plan a ride session →</div>
-          <div className="text-xs text-black/60">
+          <div className="text-xs text-black/60 dark:text-white/60">
             Already have your fleet set up? Pick an event to assign riders.
           </div>
         </div>
-        <span className="text-xs text-black/40">→</span>
+        <span className="text-xs text-black/40 dark:text-white/40">→</span>
       </Link>
 
       <form action={createVehicleAction} className="card grid grid-cols-1 md:grid-cols-6 gap-3 items-end">
@@ -59,7 +59,7 @@ export default async function VehiclesPage() {
 
       <div className="space-y-3">
         {rows.length === 0 && (
-          <div className="card text-center text-black/50 py-6 text-sm">No vehicles yet.</div>
+          <div className="card text-center text-black/50 dark:text-white/50 py-6 text-sm">No vehicles yet.</div>
         )}
         {rows.map((v) => (
           <form key={v.id} action={updateVehicleAction} className="card grid grid-cols-1 md:grid-cols-6 gap-3 items-end">

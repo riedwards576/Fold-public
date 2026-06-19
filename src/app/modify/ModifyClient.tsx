@@ -157,7 +157,7 @@ export default function ModifyClient() {
       )}
 
       {explanation && (previews || deletes.length > 0) && (
-        <div className="text-sm text-black/60 italic">{explanation}</div>
+        <div className="text-sm text-black/60 dark:text-white/60 italic">{explanation}</div>
       )}
 
       {ambiguous.length > 0 && (
@@ -185,7 +185,7 @@ export default function ModifyClient() {
                   >
                     {before ? `${before.firstName} ${before.lastName ?? ""}`.trim() : `Student #${p.studentId}`}
                   </Link>
-                  <button onClick={() => dropPreview(i)} className="text-xs text-black/40 hover:text-red-600">
+                  <button onClick={() => dropPreview(i)} className="text-xs text-black/40 dark:text-white/40 hover:text-red-600">
                     skip
                   </button>
                 </div>
@@ -203,14 +203,14 @@ export default function ModifyClient() {
                         : v;
                       return (
                         <tr key={k}>
-                          <td className="text-xs text-black/60 align-top">{FIELD_LABEL[k] ?? k}</td>
-                          <td className="align-top whitespace-pre-wrap text-black/50">{fmt(beforeVal)}</td>
+                          <td className="text-xs text-black/60 dark:text-white/60 align-top">{FIELD_LABEL[k] ?? k}</td>
+                          <td className="align-top whitespace-pre-wrap text-black/50 dark:text-white/50">{fmt(beforeVal)}</td>
                           <td className="align-top whitespace-pre-wrap font-medium">{fmt(afterVal)}</td>
                         </tr>
                       );
                     })}
                     {patchEntries.length === 0 && (
-                      <tr><td colSpan={3} className="text-black/40 text-center">No changes proposed.</td></tr>
+                      <tr><td colSpan={3} className="text-black/40 dark:text-white/40 text-center">No changes proposed.</td></tr>
                     )}
                   </tbody>
                 </table>
@@ -236,7 +236,7 @@ export default function ModifyClient() {
                     <span className="chip bg-emerald-500/15 text-emerald-700 mr-2">new</span>
                     {`${c.firstName} ${(c as any).lastName ?? ""}`.trim()}
                   </span>
-                  <button onClick={() => dropCreate(i)} className="text-xs text-black/40 hover:text-red-600">
+                  <button onClick={() => dropCreate(i)} className="text-xs text-black/40 dark:text-white/40 hover:text-red-600">
                     skip
                   </button>
                 </div>
@@ -248,7 +248,7 @@ export default function ModifyClient() {
                     <tbody>
                       {fields.map(([k, v]) => (
                         <tr key={k}>
-                          <td className="text-xs text-black/60">{FIELD_LABEL[k] ?? k}</td>
+                          <td className="text-xs text-black/60 dark:text-white/60">{FIELD_LABEL[k] ?? k}</td>
                           <td className="font-medium">{fmt(v)}</td>
                         </tr>
                       ))}
@@ -278,9 +278,9 @@ export default function ModifyClient() {
                       ? `${d.student.firstName} ${d.student.lastName ?? ""}`.trim()
                       : `Student #${d.studentId}`}
                   </Link>
-                  {d.reason && <span className="ml-2 text-xs text-black/50">{d.reason}</span>}
+                  {d.reason && <span className="ml-2 text-xs text-black/50 dark:text-white/50">{d.reason}</span>}
                 </div>
-                <button onClick={() => dropDelete(i)} className="text-xs text-black/40 hover:text-red-700">
+                <button onClick={() => dropDelete(i)} className="text-xs text-black/40 dark:text-white/40 hover:text-red-700">
                   keep
                 </button>
               </li>
@@ -316,7 +316,7 @@ export default function ModifyClient() {
       )}
 
       {previews && previews.length === 0 && creates.length === 0 && deletes.length === 0 && ambiguous.length === 0 && (
-        <p className="text-sm text-black/50">
+        <p className="text-sm text-black/50 dark:text-white/50">
           Nothing found. Try e.g. "mark Kenzie as core member", "add Sarah Kim, sophomore", or "delete the duplicate entry".
         </p>
       )}

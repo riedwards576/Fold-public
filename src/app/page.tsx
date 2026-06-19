@@ -179,14 +179,14 @@ export default async function DashboardPage() {
         <div className="flex items-center justify-between mb-3">
           <div>
             <h2 className="font-semibold">Active prospects</h2>
-            <p className="text-xs text-black/60">
+            <p className="text-xs text-black/60 dark:text-white/60">
               Non-core members ranked by attendance in the last 60 days. Highest priority for follow-up.
             </p>
           </div>
-          <Link href="/students" className="text-xs text-black/60 hover:underline">all students →</Link>
+          <Link href="/students" className="text-xs text-black/60 dark:text-white/60 hover:underline">all students →</Link>
         </div>
         {hotProspects.length === 0 ? (
-          <p className="text-sm text-black/50">No recent attendance yet.</p>
+          <p className="text-sm text-black/50 dark:text-white/50">No recent attendance yet.</p>
         ) : (
           <table>
             <thead>
@@ -199,13 +199,13 @@ export default async function DashboardPage() {
                 <tr key={s.id} className="hover:bg-black/5 dark:hover:bg-white/5">
                   <td>
                     <Link href={`/students/${s.id}`} className="font-medium hover:underline">{s.name}</Link>
-                    <span className="ml-1 text-xs text-black/40">{s.gender === "M" ? "♂" : s.gender === "F" ? "♀" : ""}</span>
+                    <span className="ml-1 text-xs text-black/40 dark:text-white/40">{s.gender === "M" ? "♂" : s.gender === "F" ? "♀" : ""}</span>
                   </td>
                   <td>{s.year ?? "—"}</td>
-                  <td>{s.status ? <span className="chip">{s.status}</span> : <span className="text-black/30">—</span>}</td>
+                  <td>{s.status ? <span className="chip">{s.status}</span> : <span className="text-black/30 dark:text-white/30">—</span>}</td>
                   <td className="font-medium">{s.visits}</td>
-                  <td className="text-sm">{s.primaryContact ?? <span className="text-black/30">—</span>}</td>
-                  <td className="text-sm text-black/60">{s.lastSeen}</td>
+                  <td className="text-sm">{s.primaryContact ?? <span className="text-black/30 dark:text-white/30">—</span>}</td>
+                  <td className="text-sm text-black/60 dark:text-white/60">{s.lastSeen}</td>
                 </tr>
               ))}
             </tbody>

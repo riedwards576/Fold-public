@@ -128,14 +128,14 @@ export default function IntakeDumper() {
       {preview && (
         <div className="space-y-3">
           {preview.explanation && (
-            <p className="text-sm text-black/60 italic">{preview.explanation}</p>
+            <p className="text-sm text-black/60 dark:text-white/60 italic">{preview.explanation}</p>
           )}
           {preview.ambiguous.length > 0 && (
             <div className="card border-amber-300/50">
               <div className="text-sm font-medium text-amber-700 dark:text-amber-200">
                 Ambiguous names
               </div>
-              <div className="text-xs text-black/60 mt-1">
+              <div className="text-xs text-black/60 dark:text-white/60 mt-1">
                 These didn&apos;t match exactly one student. Add or rename them in /students, then re-parse.
               </div>
               <ul className="mt-2 flex flex-wrap gap-2">
@@ -204,13 +204,13 @@ function ContactCard({
             {isExisting
               ? contact.existingDisplayName ?? `Student #${contact.studentId}`
               : `${contact.firstName ?? ""} ${contact.lastName ?? ""}`.trim() || (
-                  <em className="text-black/40">unnamed</em>
+                  <em className="text-black/40 dark:text-white/40">unnamed</em>
                 )}
           </span>
         </div>
         <button
           onClick={onRemove}
-          className="text-xs text-black/40 hover:text-red-600"
+          className="text-xs text-black/40 dark:text-white/40 hover:text-red-600"
         >
           drop
         </button>
@@ -225,7 +225,7 @@ function ContactCard({
             <div key={cand.studentId} className="flex items-center justify-between gap-2">
               <span className="text-black/80 dark:text-white/80">
                 {cand.displayName}
-                <span className="text-xs text-black/50 ml-2">
+                <span className="text-xs text-black/50 dark:text-white/50 ml-2">
                   {cand.reasons.join(", ")} • score {cand.score}
                   {cand.addedByDisplayName ? ` • added by ${cand.addedByDisplayName}` : ""}
                 </span>
@@ -341,8 +341,8 @@ function ContactCard({
         )}
       </div>
 
-      {contact.notes && <p className="text-xs text-black/50">note: {contact.notes}</p>}
-      <p className="text-[11px] text-black/30">from: &quot;{contact.rawText}&quot;</p>
+      {contact.notes && <p className="text-xs text-black/50 dark:text-white/50">note: {contact.notes}</p>}
+      <p className="text-[11px] text-black/30 dark:text-white/30">from: &quot;{contact.rawText}&quot;</p>
     </div>
   );
 }

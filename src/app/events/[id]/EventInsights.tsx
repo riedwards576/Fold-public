@@ -45,32 +45,32 @@ export default function EventInsights({ eventId, stats }: { eventId: number; sta
       <div className="grid grid-cols-3 gap-3">
         <div className="card text-center">
           <div className="text-2xl font-semibold">{stats.firstTimers}</div>
-          <div className="text-xs text-black/60">First-timers</div>
+          <div className="text-xs text-black/60 dark:text-white/60">First-timers</div>
         </div>
         <div className="card text-center">
           <div className="text-2xl font-semibold">{stats.returners}</div>
-          <div className="text-xs text-black/60">Returners</div>
+          <div className="text-xs text-black/60 dark:text-white/60">Returners</div>
         </div>
         <div className="card text-center">
           <div className="text-2xl font-semibold">
             {stats.genderSplit.M}M / {stats.genderSplit.F}F
             {stats.genderSplit.unknown > 0 && (
-              <span className="text-sm text-black/40"> +{stats.genderSplit.unknown}</span>
+              <span className="text-sm text-black/40 dark:text-white/40"> +{stats.genderSplit.unknown}</span>
             )}
           </div>
-          <div className="text-xs text-black/60">Gender split</div>
+          <div className="text-xs text-black/60 dark:text-white/60">Gender split</div>
         </div>
       </div>
 
       {/* Invite chains */}
       {stats.inviteChains.length > 0 && (
         <div className="card">
-          <h3 className="text-sm font-medium mb-2">Invite chains</h3>
+          <h3 className="text-sm font-bold mb-2">Invite chains</h3>
           <ul className="space-y-1">
             {stats.inviteChains.map((chain, i) => (
               <li key={i} className="text-sm">
                 <span className="font-medium">{chain.inviter}</span>
-                <span className="text-black/60"> brought </span>
+                <span className="text-black/60 dark:text-white/60"> brought </span>
                 {chain.invitees.map((name, j) => (
                   <span key={j}>
                     {j > 0 && ", "}
@@ -86,25 +86,25 @@ export default function EventInsights({ eventId, stats }: { eventId: number; sta
       {/* AI insights */}
       <div className="rounded-lg border border-accent/30 bg-accent/5 p-3 space-y-2">
         <div className="flex items-center justify-between">
-          <div className="text-sm font-medium">Insights</div>
+          <div className="text-sm font-bold">Insights</div>
           <button
             onClick={fetchInsights}
             disabled={loading}
-            className="text-xs text-black/60 hover:underline disabled:opacity-50"
+            className="text-xs text-black/60 dark:text-white/60 hover:underline disabled:opacity-50"
           >
             {loading ? "thinking…" : "regenerate"}
           </button>
         </div>
         {error && <p className="text-sm text-red-600">{error}</p>}
         {!insights && !error && (
-          <p className="text-sm text-black/50">{loading ? "Thinking…" : "Waiting…"}</p>
+          <p className="text-sm text-black/50 dark:text-white/50">{loading ? "Thinking…" : "Waiting…"}</p>
         )}
         {insights && (
           <ul className="space-y-2">
             {insights.map((it, i) => (
               <li key={i} className="text-sm">
                 <div className="font-medium">{it.headline}</div>
-                <div className="text-xs text-black/60">{it.evidence}</div>
+                <div className="text-xs text-white/70 dark:text-white/70 italic">{it.evidence}</div>
               </li>
             ))}
           </ul>

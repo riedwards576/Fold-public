@@ -14,13 +14,44 @@ export default function EventAnalytics({
   aggregates: EventAggregates;
   topInviters?: TopInviter[];
 }) {
+  const [startMonth, setStartMonth] = useState<string>(() => {
+    const d = new Date();
+    d.setMonth(d.getMonth() - 6);
+    return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`;
+  });
+  const [endMonth, setEndMonth] = useState<string>(() => {
+    const d = new Date();
+    return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`;
+  });
+  const minMonth = (() => {
+    const d = new Date();
+    d.setFullYear(d.getFullYear() - 1);
+    return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`;
+  })();
+
+  const filteredByMonth = aggregates.byMonth.filter(r => r.key >= startMonth && r.key <= endMonth);
+  const filteredInviteByMonth = aggregates.invite?.byMonth.filter(r => r.key >= startMonth && r.key <= endMonth) ?? [];
+
   return (
     <section className="card space-y-4 border-accent/20">
       <div>
-        <h2 className="font-semibold">📊 What's driving attendance?</h2>
-        <p className="text-xs text-black/60">
+        <h2 className="text-lg font-bold">📊 What&apos;s driving attendance?</h2>
+        <p className="text-xs text-black/60 dark:text-white/60">
           {aggregates.totalEvents} events · avg {aggregates.avgAttendance.toFixed(1)} attendees · {aggregates.totalAttendance} total check-ins.
         </p>
+      </div>
+
+      <div className="flex items-center gap-3 text-xs text-black/60 dark:text-white/60 flex-wrap">
+        <label className="flex items-center gap-1">
+          Start <input type="month" value={startMonth} min={minMonth} max={endMonth}
+            className="input py-0.5 px-1 text-xs"
+            onChange={e => setStartMonth(e.target.value)} />
+        </label>
+        <label className="flex items-center gap-1">
+          End <input type="month" value={endMonth} min={startMonth} max={new Date().toISOString().slice(0,7)}
+            className="input py-0.5 px-1 text-xs"
+            onChange={e => setEndMonth(e.target.value)} />
+        </label>
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -44,7 +75,7 @@ export default function EventAnalytics({
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
         <MiniBar title="Avg attendance by day of week" data={aggregates.byDay} />
-        <MiniBar title="Avg attendance by month" data={aggregates.byMonth} />
+        <MiniBar title="Avg attendance by month" data={filteredByMonth} />
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -53,7 +84,7 @@ export default function EventAnalytics({
       </div>
 
       {aggregates.invite && (
-        <InviteSection invite={aggregates.invite} topInviters={topInviters} />
+        <InviteSection invite={aggregates.invite} topInviters={topInviters} filteredInviteByMonth={filteredInviteByMonth} />
       )}
 
       <InsightsPanel aggregates={aggregates} />
@@ -72,14 +103,14 @@ function PairCompare({
   const diff = a.avg - b.avg;
   return (
     <div className="rounded-lg border border-black/10 dark:border-white/10 p-3 space-y-1">
-      <div className="text-sm font-medium">{title}</div>
-      <div className="text-xs text-black/40">{caveat}</div>
+      <div className="text-sm font-bold">{title}</div>
+      <div className="text-xs text-black/40 dark:text-white/40">{caveat}</div>
       <div className="flex items-baseline gap-2 text-sm">
         <span className="font-mono tabular-nums">{a.avg.toFixed(1)}</span>
-        <span className="text-black/50">{a.label} ({a.n})</span>
-        <span className="text-black/30">vs</span>
+        <span className="text-black/50 dark:text-white/50">{a.label} ({a.n})</span>
+        <span className="text-black/30 dark:text-white/30">vs</span>
         <span className="font-mono tabular-nums">{b.avg.toFixed(1)}</span>
-        <span className="text-black/50">{b.label} ({b.n})</span>
+        <span className="text-black/50 dark:text-white/50">{b.label} ({b.n})</span>
       </div>
       <div className={`text-xs ${diff >= 0 ? "text-emerald-600" : "text-red-600"}`}>
         {diff >= 0 ? "+" : ""}{diff.toFixed(1)} avg attendees
@@ -91,13 +122,13 @@ function PairCompare({
 function MiniBar({ title, data }: { title: string; data: { key: string; avg: number; n: number }[] }) {
   return (
     <div className="rounded-lg border border-black/10 dark:border-white/10 p-3">
-      <div className="text-sm font-medium mb-2">{title}</div>
+      <div className="text-sm font-bold mb-2">{title}</div>
       {data.length === 0 ? (
-        <div className="text-xs text-black/40">no data</div>
+        <div className="text-xs text-black/40 dark:text-white/40">no data</div>
       ) : (
         <ResponsiveContainer width="100%" height={160}>
           <BarChart data={data}>
-            <CartesianGrid strokeDasharray="3 3" stroke="rgba(0,0,0,0.06)" />
+            <CartesianGrid strokeDasharray="3 3" stroke="rgba(128,128,128,0.1)" />
             <XAxis dataKey="key" fontSize={11} />
             <YAxis fontSize={11} allowDecimals={false} />
             <Tooltip
@@ -116,15 +147,15 @@ function MiniBar({ title, data }: { title: string; data: { key: string; avg: num
 function EventList({ title, rows }: { title: string; rows: { name: string; date: string; count: number }[] }) {
   return (
     <div className="rounded-lg border border-black/10 dark:border-white/10 p-3">
-      <div className="text-sm font-medium mb-2">{title}</div>
+      <div className="text-sm font-bold mb-2">{title}</div>
       {rows.length === 0 ? (
-        <div className="text-xs text-black/40">no data</div>
+        <div className="text-xs text-black/40 dark:text-white/40">no data</div>
       ) : (
         <ul className="text-sm space-y-1">
           {rows.map((r, i) => (
             <li key={i} className="flex justify-between gap-2">
               <span className="truncate">{r.name}</span>
-              <span className="text-black/50 shrink-0">{r.count} · {r.date}</span>
+              <span className="text-black/50 dark:text-white/50 shrink-0">{r.count} · {r.date}</span>
             </li>
           ))}
         </ul>
@@ -136,16 +167,18 @@ function EventList({ title, rows }: { title: string; rows: { name: string; date:
 function InviteSection({
   invite,
   topInviters,
+  filteredInviteByMonth,
 }: {
   invite: NonNullable<EventAggregates["invite"]>;
   topInviters: TopInviter[];
+  filteredInviteByMonth: { key: string; events: number; avgInviteRatio: number }[];
 }) {
   const fmtRatio = (r: number) => `${(r * 100).toFixed(0)}%`;
   return (
     <div className="rounded-xl border border-accent/30 bg-accent/5 p-3 space-y-3">
       <div>
-        <h3 className="font-medium">🪜 Invite-driven attendance</h3>
-        <p className="text-xs text-black/60">
+        <h3 className="font-bold">🪜 Invite-driven attendance</h3>
+        <p className="text-xs text-black/60 dark:text-white/60">
           Of new attendees ({invite.totalNew} across the period), {invite.totalInvitedNew} were
           tagged as &ldquo;brought by&rdquo; another student. Average per-event invite ratio: {fmtRatio(invite.avgInviteRatio)}.
         </p>
@@ -168,19 +201,19 @@ function InviteSection({
         )}
       </div>
 
-      <InviteMonthBar data={invite.byMonth} />
+      <InviteMonthBar data={filteredInviteByMonth} />
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
         <div className="rounded-lg border border-black/10 dark:border-white/10 p-3">
-          <div className="text-sm font-medium mb-2">Top invite-driven events</div>
+          <div className="text-sm font-bold mb-2">Top invite-driven events</div>
           {invite.topInviteEvents.length === 0 ? (
-            <div className="text-xs text-black/40">no data — no events have invited new attendees yet</div>
+            <div className="text-xs text-black/40 dark:text-white/40">no data — no events have invited new attendees yet</div>
           ) : (
             <ul className="text-sm space-y-1">
               {invite.topInviteEvents.map((e, i) => (
                 <li key={i} className="flex justify-between gap-2">
                   <span className="truncate">{e.name}</span>
-                  <span className="text-black/50 shrink-0">
+                  <span className="text-black/50 dark:text-white/50 shrink-0">
                     {fmtRatio(e.ratio)} of {e.n} new · {e.date}
                   </span>
                 </li>
@@ -189,15 +222,15 @@ function InviteSection({
           )}
         </div>
         <div className="rounded-lg border border-black/10 dark:border-white/10 p-3">
-          <div className="text-sm font-medium mb-2">Top inviters (last 90d)</div>
+          <div className="text-sm font-bold mb-2">Top inviters (last 90d)</div>
           {topInviters.length === 0 ? (
-            <div className="text-xs text-black/40">no inviters yet — tag attendees with &ldquo;brought by&rdquo; in QuickAdd</div>
+            <div className="text-xs text-black/40 dark:text-white/40">no inviters yet — tag attendees with &ldquo;brought by&rdquo; in QuickAdd</div>
           ) : (
             <ul className="text-sm space-y-1">
               {topInviters.map((p) => (
                 <li key={p.studentId} className="flex justify-between gap-2">
                   <span className="truncate">{p.name}</span>
-                  <span className="text-black/50 shrink-0">
+                  <span className="text-black/50 dark:text-white/50 shrink-0">
                     {p.count} brought · {p.tier}
                   </span>
                 </li>
@@ -223,14 +256,14 @@ function InvitePair({
   const diff = a.avgInviteRatio - b.avgInviteRatio;
   return (
     <div className="rounded-lg border border-black/10 dark:border-white/10 p-3 space-y-1">
-      <div className="text-sm font-medium">{title}</div>
-      <div className="text-xs text-black/40">avg invite ratio per event in each bucket</div>
+      <div className="text-sm font-bold">{title}</div>
+      <div className="text-xs text-black/40 dark:text-white/40">avg invite ratio per event in each bucket</div>
       <div className="flex items-baseline gap-2 text-sm">
         <span className="font-mono tabular-nums">{fmt(a.avgInviteRatio)}</span>
-        <span className="text-black/50">{a.key} ({a.events})</span>
-        <span className="text-black/30">vs</span>
+        <span className="text-black/50 dark:text-white/50">{a.key} ({a.events})</span>
+        <span className="text-black/30 dark:text-white/30">vs</span>
         <span className="font-mono tabular-nums">{fmt(b.avgInviteRatio)}</span>
-        <span className="text-black/50">{b.key} ({b.events})</span>
+        <span className="text-black/50 dark:text-white/50">{b.key} ({b.events})</span>
       </div>
       <div className={`text-xs ${diff >= 0 ? "text-emerald-600" : "text-red-600"}`}>
         {diff >= 0 ? "+" : ""}{(diff * 100).toFixed(0)} pts
@@ -242,13 +275,13 @@ function InvitePair({
 function InviteMonthBar({ data }: { data: { key: string; events: number; avgInviteRatio: number }[] }) {
   return (
     <div className="rounded-lg border border-black/10 dark:border-white/10 p-3">
-      <div className="text-sm font-medium mb-2">Invite ratio by month</div>
+      <div className="text-sm font-bold mb-2">Invite ratio by month</div>
       {data.length === 0 ? (
-        <div className="text-xs text-black/40">no data</div>
+        <div className="text-xs text-black/40 dark:text-white/40">no data</div>
       ) : (
         <ResponsiveContainer width="100%" height={160}>
           <BarChart data={data}>
-            <CartesianGrid strokeDasharray="3 3" stroke="rgba(0,0,0,0.06)" />
+            <CartesianGrid strokeDasharray="3 3" stroke="rgba(128,128,128,0.1)" />
             <XAxis dataKey="key" fontSize={11} />
             <YAxis fontSize={11} domain={[0, 1]} tickFormatter={(v: number) => `${Math.round(v * 100)}%`} />
             <Tooltip
@@ -296,25 +329,25 @@ function InsightsPanel({ aggregates }: { aggregates: EventAggregates }) {
   return (
     <div className="rounded-lg border border-accent/30 bg-accent/5 p-3 space-y-2">
       <div className="flex items-center justify-between">
-        <div className="text-sm font-medium">Insights</div>
+        <div className="text-sm font-bold">Insights</div>
         <button
           onClick={fetchInsights}
           disabled={loading}
-          className="text-xs text-black/60 hover:underline disabled:opacity-50"
+          className="text-xs text-black/60 dark:text-white/60 hover:underline disabled:opacity-50"
         >
           {loading ? "thinking…" : "regenerate"}
         </button>
       </div>
       {error && <p className="text-sm text-red-600">{error}</p>}
       {!insights && !error && (
-        <p className="text-sm text-black/50">{loading ? "Thinking…" : "Waiting…"}</p>
+        <p className="text-sm text-black/50 dark:text-white/50">{loading ? "Thinking…" : "Waiting…"}</p>
       )}
       {insights && (
         <ul className="space-y-2">
           {insights.map((it, i) => (
             <li key={i} className="text-sm">
               <div className="font-medium">{it.headline}</div>
-              <div className="text-xs text-black/60">{it.evidence}</div>
+              <div className="text-xs text-white/70 dark:text-white/70 italic">{it.evidence}</div>
             </li>
           ))}
         </ul>

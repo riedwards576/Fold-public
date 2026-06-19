@@ -93,14 +93,14 @@ export default async function EventPage({ params }: { params: Promise<{ id: stri
   return (
     <div className="max-w-3xl mx-auto px-4 py-8 space-y-6">
       <div>
-        <Link href="/events" className="text-sm text-black/60 hover:underline">← Events</Link>
+        <Link href="/events" className="text-sm text-black/60 dark:text-white/60 hover:underline">← Events</Link>
         <div className="flex items-baseline justify-between">
-          <h1 className="text-2xl font-semibold">{e.name}</h1>
+          <h1 className="text-2xl font-bold">{e.name}</h1>
           <form action={deleteEvent}>
             <button className="btn-ghost text-red-600 text-xs">Delete event</button>
           </form>
         </div>
-        <p className="text-sm text-black/60">
+        <p className="text-sm text-black/60 dark:text-white/60">
           {new Date(e.startDate).toLocaleDateString()}
           {e.type ? ` · ${e.type}` : ""}
           {e.location ? ` · ${e.location}` : ""}
@@ -119,15 +119,15 @@ export default async function EventPage({ params }: { params: Promise<{ id: stri
       >
         <div>
           <div className="font-medium">Rides</div>
-          <div className="text-xs text-black/60">Carpool seating for this event.</div>
+          <div className="text-xs text-black/60 dark:text-white/60">Carpool seating for this event.</div>
         </div>
-        <span className="text-xs text-black/40">→</span>
+        <span className="text-xs text-black/40 dark:text-white/40">→</span>
       </Link>
 
       <div className="card">
-        <h2 className="font-semibold mb-3">Present ({present.length})</h2>
+        <h2 className="font-bold text-lg mb-3">Present ({present.length})</h2>
         {present.length === 0 ? (
-          <p className="text-sm text-black/50">Nobody yet. Use the dumper above ↑</p>
+          <p className="text-sm text-black/50 dark:text-white/50">Nobody yet. Use the dumper above ↑</p>
         ) : (
           <ul className="divide-y divide-black/5 dark:divide-white/5">
             {present.map(({ a, s }) => (
@@ -138,7 +138,7 @@ export default async function EventPage({ params }: { params: Promise<{ id: stri
                 </Link>
                 <form action={removeAttendance}>
                   <input type="hidden" name="aid" value={a.id} />
-                  <button className="text-xs text-black/40 hover:text-red-600" type="submit">remove</button>
+                  <button className="text-xs text-black/40 dark:text-white/40 hover:text-red-600" type="submit">remove</button>
                 </form>
               </li>
             ))}

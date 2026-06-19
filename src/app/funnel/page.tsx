@@ -183,7 +183,7 @@ export default async function FunnelPage({
       </div>
 
       <div className="flex flex-wrap gap-2 text-xs">
-        <span className="text-black/60 self-center">Quick filters:</span>
+        <span className="text-black/60 dark:text-white/60 self-center">Quick filters:</span>
         {FILTERS.map((f) => (
           <Link
             key={f.key}
@@ -223,7 +223,7 @@ export default async function FunnelPage({
                   <td>
                     <span className="chip">{STAGE_LABEL[s.funnelStage as FunnelStage]}</span>
                   </td>
-                  <td className="text-xs text-black/60">{s.firstMetContext ?? "—"}</td>
+                  <td className="text-xs text-black/60 dark:text-white/60">{s.firstMetContext ?? "—"}</td>
                   <td>
                     {stat ? (
                       <>
@@ -233,17 +233,17 @@ export default async function FunnelPage({
                         )}
                       </>
                     ) : (
-                      <span className="text-black/40">0</span>
+                      <span className="text-black/40 dark:text-white/40">0</span>
                     )}
                   </td>
-                  <td className="text-xs text-black/60">
+                  <td className="text-xs text-black/60 dark:text-white/60">
                     {leaders
                       .slice(0, 3)
                       .map((id) => userById.get(id) ?? `#${id}`)
                       .join(", ")}
                     {leaders.length > 3 ? ` +${leaders.length - 3}` : ""}
                   </td>
-                  <td className="text-xs text-black/60">
+                  <td className="text-xs text-black/60 dark:text-white/60">
                     {last
                       ? `${Math.floor((now - last.getTime()) / (24 * 60 * 60 * 1000))}d ago`
                       : "—"}
@@ -258,7 +258,7 @@ export default async function FunnelPage({
             })}
             {filtered.length === 0 && (
               <tr>
-                <td colSpan={7} className="text-center text-black/50 py-6">
+                <td colSpan={7} className="text-center text-black/50 dark:text-white/50 py-6">
                   No students match this view.
                 </td>
               </tr>
@@ -277,29 +277,29 @@ export default async function FunnelPage({
                   <div>
                     <span className="chip mr-2">{s.triggeredBy}</span>
                     Flipped <strong>{s.flippedCount}</strong> → inactive
-                    <span className="text-black/50">
+                    <span className="text-black/50 dark:text-white/50">
                       {" "}
                       (evaluated {s.evaluated}, threshold {s.thresholdDays}d)
                     </span>
                   </div>
                   {s.flippedCount > 0 && s.flipped && s.flipped.length > 0 && (
-                    <div className="text-xs text-black/50">
+                    <div className="text-xs text-black/50 dark:text-white/50">
                       {s.flipped.slice(0, 8).map((f, i) => (
                         <span key={f.studentId}>
                           {i > 0 ? ", " : ""}
                           <Link href={`/students/${f.studentId}`} className="hover:underline">
                             #{f.studentId}
                           </Link>
-                          <span className="text-black/30"> ({f.from})</span>
+                          <span className="text-black/30 dark:text-white/30"> ({f.from})</span>
                         </span>
                       ))}
                       {s.flipped.length > 8 && (
-                        <span className="text-black/30"> …+{s.flipped.length - 8} more</span>
+                        <span className="text-black/30 dark:text-white/30"> …+{s.flipped.length - 8} more</span>
                       )}
                     </div>
                   )}
                 </div>
-                <span className="text-xs text-black/50 whitespace-nowrap">
+                <span className="text-xs text-black/50 dark:text-white/50 whitespace-nowrap">
                   {new Date(s.runAt).toLocaleString()}
                 </span>
               </li>

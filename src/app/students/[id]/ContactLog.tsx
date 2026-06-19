@@ -105,7 +105,7 @@ export default function ContactLog({
       <div className="flex items-baseline justify-between">
         <h2 className="font-semibold">Contact log</h2>
         <label className="flex items-center gap-2 text-xs">
-          <span className="text-black/60">Funnel stage:</span>
+          <span className="text-black/60 dark:text-white/60">Funnel stage:</span>
           <select
             className="text-sm bg-transparent border border-black/10 dark:border-white/10 rounded px-2 py-1"
             value={stage}
@@ -123,7 +123,7 @@ export default function ContactLog({
 
       <div className="space-y-1">
         {attempts.length === 0 && (
-          <p className="text-sm text-black/50">No contact attempts logged yet.</p>
+          <p className="text-sm text-black/50 dark:text-white/50">No contact attempts logged yet.</p>
         )}
         {attempts.map((a) => (
           <div
@@ -137,14 +137,14 @@ export default function ContactLog({
                 {a.responded ? (
                   <span className="text-emerald-600">→ responded</span>
                 ) : (
-                  <span className="text-black/50">→ no reply</span>
+                  <span className="text-black/50 dark:text-white/50">→ no reply</span>
                 )}
               </span>
               {a.channelDetail && (
-                <span className="text-xs text-black/60 italic">{a.channelDetail}</span>
+                <span className="text-xs text-black/60 dark:text-white/60 italic">{a.channelDetail}</span>
               )}
             </div>
-            <span className="text-xs text-black/50">
+            <span className="text-xs text-black/50 dark:text-white/50">
               {new Date(a.attemptedAt).toLocaleString()}
             </span>
           </div>

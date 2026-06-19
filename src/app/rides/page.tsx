@@ -55,7 +55,7 @@ export default async function RidesPage() {
     <div className="max-w-4xl mx-auto px-4 py-8 space-y-6">
       <div>
         <h1 className="text-2xl font-semibold tracking-tight">Rides</h1>
-        <p className="text-sm text-black/60 mt-1">
+        <p className="text-sm text-black/60 dark:text-white/60 mt-1">
           Pick an upcoming event to plan its carpool. Inside, you&apos;ll dump rider names plus
           natural-language hints (&ldquo;put Mike with Sarah, balance the freshmen&rdquo;) and the solver
           places everyone honoring capacity and your safety rule.
@@ -65,7 +65,7 @@ export default async function RidesPage() {
       <section className="space-y-3">
         <h2 className="text-lg font-semibold">Upcoming events</h2>
         {upcoming.length === 0 && (
-          <div className="card text-sm text-black/60 text-center py-6">
+          <div className="card text-sm text-black/60 dark:text-white/60 text-center py-6">
             No upcoming events.{" "}
             <Link href="/events" className="underline">
               Create one
@@ -82,7 +82,7 @@ export default async function RidesPage() {
                   <Link href={`/events/${e.id}`} className="font-medium hover:underline">
                     {e.name}
                   </Link>
-                  <div className="text-xs text-black/60 mt-0.5">
+                  <div className="text-xs text-black/60 dark:text-white/60 mt-0.5">
                     {new Date(e.startDate).toLocaleDateString("en-US", { timeZone: "UTC" })}
                     {e.location ? ` • ${e.location}` : ""}
                   </div>
@@ -92,7 +92,7 @@ export default async function RidesPage() {
                         {count} session{count === 1 ? "" : "s"}
                       </span>
                     ) : (
-                      <span className="text-black/40">no sessions yet</span>
+                      <span className="text-black/40 dark:text-white/40">no sessions yet</span>
                     )}
                   </div>
                 </div>
@@ -117,14 +117,14 @@ export default async function RidesPage() {
               >
                 <div className="min-w-0">
                   <div className="font-medium truncate">
-                    {s.eventName} <span className="text-black/40">— {s.label}</span>
+                    {s.eventName} <span className="text-black/40 dark:text-white/40">— {s.label}</span>
                   </div>
-                  <div className="text-xs text-black/60">
+                  <div className="text-xs text-black/60 dark:text-white/60">
                     {new Date(s.eventDate).toLocaleDateString("en-US", { timeZone: "UTC" })} • last edited{" "}
                     {new Date(s.createdAt).toLocaleString()}
                   </div>
                 </div>
-                <span className="text-xs text-black/40">→</span>
+                <span className="text-xs text-black/40 dark:text-white/40">→</span>
               </Link>
             ))}
           </div>
@@ -132,12 +132,12 @@ export default async function RidesPage() {
       )}
       <details className="group">
         <summary className="cursor-pointer text-lg font-semibold flex items-center gap-2">
-          <span className="text-sm text-black/40 group-open:rotate-90 transition-transform">▶</span>
+          <span className="text-sm text-black/40 dark:text-white/40 group-open:rotate-90 transition-transform">▶</span>
           Manage vehicles
-          <span className="text-sm font-normal text-black/50">({vehicleRows.length})</span>
+          <span className="text-sm font-normal text-black/50 dark:text-white/50">({vehicleRows.length})</span>
         </summary>
         <div className="mt-4 space-y-4">
-          <p className="text-sm text-black/60">
+          <p className="text-sm text-black/60 dark:text-white/60">
             Capacity includes the driver seat. A 7-seat minivan = capacity 7.
           </p>
 
@@ -163,7 +163,7 @@ export default async function RidesPage() {
 
           <div className="space-y-3">
             {vehicleRows.length === 0 && (
-              <div className="card text-center text-black/50 py-6 text-sm">No vehicles yet.</div>
+              <div className="card text-center text-black/50 dark:text-white/50 py-6 text-sm">No vehicles yet.</div>
             )}
             {vehicleRows.map((v) => (
               <form key={v.id} action={updateVehicleAction} className="card grid grid-cols-1 md:grid-cols-8 gap-3 items-end">

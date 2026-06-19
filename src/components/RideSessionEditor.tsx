@@ -273,7 +273,7 @@ export default function RideSessionEditor(props: Props) {
             onChange={(e) => setEnforceRule(e.target.checked)}
           />
           <span className="font-medium">Enforce safety best practices</span>
-          <span className="text-xs text-black/60">
+          <span className="text-xs text-black/60 dark:text-white/60">
             (no person alone with the opposite gender — driver counts when known)
           </span>
         </label>
@@ -316,12 +316,12 @@ export default function RideSessionEditor(props: Props) {
           </div>
         </div>
         {vehicles.length === 0 && (
-          <div className="text-sm text-black/60">
+          <div className="text-sm text-black/60 dark:text-white/60">
             Add a saved vehicle, an ad-hoc, or paste a description below and click <em>↓ from text</em>.
           </div>
         )}
         {fleetExplanation && (
-          <div className="text-xs text-black/60">{fleetExplanation}</div>
+          <div className="text-xs text-black/60 dark:text-white/60">{fleetExplanation}</div>
         )}
         {ambiguousVehicleNames.length > 0 && (
           <div className="text-xs text-amber-700 dark:text-amber-300">
@@ -389,7 +389,7 @@ export default function RideSessionEditor(props: Props) {
 
       <section className="card space-y-3">
         <h2 className="text-lg font-semibold">Riders &amp; instructions</h2>
-        <p className="text-xs text-black/60">
+        <p className="text-xs text-black/60 dark:text-white/60">
           Describe the whole night in plain English. Vehicles + drivers can be pulled out via <em>↓ from text</em> above; riders and rules go through <em>Parse &amp; place</em> below. e.g. <em>&quot;Sienna with Jordan driving, Civic with Alex. Riders: Sam (new freshman bro), Taylor, Morgan, Riley. Put Sam with Alex, balance freshmen.&quot;</em>
         </p>
         <textarea
@@ -404,7 +404,7 @@ export default function RideSessionEditor(props: Props) {
           </button>
           {error && <div className="text-sm text-red-600">{error}</div>}
           {explanation && !error && (
-            <div className="text-xs text-black/60">{explanation}</div>
+            <div className="text-xs text-black/60 dark:text-white/60">{explanation}</div>
           )}
         </div>
       </section>
@@ -414,7 +414,7 @@ export default function RideSessionEditor(props: Props) {
           {ambiguous.length > 0 && (
             <section className="card border-amber-300/50">
               <div className="text-sm font-medium text-amber-700 dark:text-amber-200">Ambiguous names</div>
-              <div className="text-xs text-black/60 mt-1">
+              <div className="text-xs text-black/60 dark:text-white/60 mt-1">
                 These didn&apos;t match exactly one student — add or rename them in Students, then re-parse.
               </div>
               <ul className="mt-2 flex flex-wrap gap-2">
@@ -448,7 +448,7 @@ export default function RideSessionEditor(props: Props) {
               </button>
             </div>
             {committedAt && (
-              <div className="text-xs text-black/60">Last saved: {new Date(committedAt).toLocaleTimeString()}</div>
+              <div className="text-xs text-black/60 dark:text-white/60">Last saved: {new Date(committedAt).toLocaleTimeString()}</div>
             )}
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
@@ -467,7 +467,7 @@ export default function RideSessionEditor(props: Props) {
                     <div className="flex items-baseline justify-between">
                       <div>
                         <div className="font-medium">{v.name}</div>
-                        <div className="text-xs text-black/60">
+                        <div className="text-xs text-black/60 dark:text-white/60">
                           Driver: {v.driverName || "—"}
                           {v.driverGender ? ` (${v.driverGender})` : ""} • {occCount}/{v.capacity}
                           {seatsLeft > 0 ? ` • ${seatsLeft} seat${seatsLeft === 1 ? "" : "s"} left` : seatsLeft < 0 ? " • OVER" : " • full"}
@@ -483,7 +483,7 @@ export default function RideSessionEditor(props: Props) {
 
                     <ul className="space-y-1">
                       {a.riderIds.length === 0 && (
-                        <li className="text-xs text-black/40 italic">empty</li>
+                        <li className="text-xs text-black/40 dark:text-white/40 italic">empty</li>
                       )}
                       {a.riderIds.map((rid) => {
                         const r = ridersById.get(rid);
@@ -491,7 +491,7 @@ export default function RideSessionEditor(props: Props) {
                           <li key={rid} className="flex items-center justify-between gap-2 text-sm">
                             <span>
                               {r?.displayName ?? rid}
-                              {r?.gender ? <span className="text-xs text-black/40 ml-1">({r.gender})</span> : null}
+                              {r?.gender ? <span className="text-xs text-black/40 dark:text-white/40 ml-1">({r.gender})</span> : null}
                               {r?.match === "new" ? <span className="chip ml-1">new</span> : null}
                             </span>
                             <select
@@ -531,7 +531,7 @@ export default function RideSessionEditor(props: Props) {
             <div className="card">
               <div className="text-sm font-medium">Unassigned</div>
               {unassigned.length === 0 ? (
-                <div className="text-xs text-black/40 mt-1">none — everyone has a seat.</div>
+                <div className="text-xs text-black/40 dark:text-white/40 mt-1">none — everyone has a seat.</div>
               ) : (
                 <ul className="mt-2 space-y-1">
                   {unassigned.map((rid) => {
@@ -540,7 +540,7 @@ export default function RideSessionEditor(props: Props) {
                       <li key={rid} className="flex items-center justify-between text-sm">
                         <span>
                           {r?.displayName ?? rid}
-                          {r?.gender ? <span className="text-xs text-black/40 ml-1">({r.gender})</span> : null}
+                          {r?.gender ? <span className="text-xs text-black/40 dark:text-white/40 ml-1">({r.gender})</span> : null}
                           {r?.match === "new" ? <span className="chip ml-1">new</span> : null}
                         </span>
                         <select

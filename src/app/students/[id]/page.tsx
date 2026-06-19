@@ -156,7 +156,7 @@ export default async function StudentPage({ params }: { params: Promise<{ id: st
     <div className="max-w-3xl mx-auto px-4 py-8 space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <Link href="/students" className="text-sm text-black/60 hover:underline">← Students</Link>
+          <Link href="/students" className="text-sm text-black/60 dark:text-white/60 hover:underline">← Students</Link>
           <h1 className="text-2xl font-semibold">
             {s.firstName} {s.lastName ?? ""}
           </h1>
@@ -180,25 +180,25 @@ export default async function StudentPage({ params }: { params: Promise<{ id: st
           </div>
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-sm">
             <div className="rounded-lg border border-black/10 dark:border-white/10 p-2">
-              <div className="text-[10px] uppercase tracking-wide text-black/50">Friends brought</div>
+              <div className="text-[10px] uppercase tracking-wide text-black/50 dark:text-white/50">Friends brought</div>
               <div className="text-2xl font-semibold tabular-nums">{myHealth.friendsBrought}</div>
             </div>
             <div className="rounded-lg border border-black/10 dark:border-white/10 p-2">
-              <div className="text-[10px] uppercase tracking-wide text-black/50">Last 30d</div>
+              <div className="text-[10px] uppercase tracking-wide text-black/50 dark:text-white/50">Last 30d</div>
               <div className="text-2xl font-semibold tabular-nums">{myHealth.recentAttendance}</div>
             </div>
             <div className="rounded-lg border border-black/10 dark:border-white/10 p-2">
-              <div className="text-[10px] uppercase tracking-wide text-black/50">Last 365d</div>
+              <div className="text-[10px] uppercase tracking-wide text-black/50 dark:text-white/50">Last 365d</div>
               <div className="text-2xl font-semibold tabular-nums">{myHealth.yearlyAttendance}</div>
             </div>
             <div className="rounded-lg border border-black/10 dark:border-white/10 p-2">
-              <div className="text-[10px] uppercase tracking-wide text-black/50">Lifetime</div>
+              <div className="text-[10px] uppercase tracking-wide text-black/50 dark:text-white/50">Lifetime</div>
               <div className="text-2xl font-semibold tabular-nums">{myHealth.totalAttendance}</div>
             </div>
           </div>
           {inviter && (
             <p className="text-sm">
-              <span className="text-black/60">Invited by:</span>{" "}
+              <span className="text-black/60 dark:text-white/60">Invited by:</span>{" "}
               <Link href={`/students/${inviter.id}`} className="hover:underline">
                 {inviter.firstName}
                 {inviter.lastName ? " " + inviter.lastName : ""}
@@ -207,7 +207,7 @@ export default async function StudentPage({ params }: { params: Promise<{ id: st
           )}
           {friends.length > 0 && (
             <div className="text-sm">
-              <div className="text-black/60 mb-1">Brought ({friends.length}):</div>
+              <div className="text-black/60 dark:text-white/60 mb-1">Brought ({friends.length}):</div>
               <ul className="flex flex-wrap gap-2">
                 {friends.map((f) => (
                   <li key={f.id}>

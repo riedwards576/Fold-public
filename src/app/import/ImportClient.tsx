@@ -137,7 +137,7 @@ export default function ImportClient() {
               className="hidden"
               onChange={(e) => e.target.files?.[0] && onFile(e.target.files[0])}
             />
-            <span className="text-sm text-black/60">Click or drop a CSV here</span>
+            <span className="text-sm text-black/60 dark:text-white/60">Click or drop a CSV here</span>
           </label>
         </>
       )}
@@ -159,7 +159,7 @@ export default function ImportClient() {
               {preview.headers.map((h, i) => (
                 <div key={i} className="flex items-center gap-2">
                   <span className="text-sm flex-1 truncate" title={h}>{h}</span>
-                  <span className="text-black/30">→</span>
+                  <span className="text-black/30 dark:text-white/30">→</span>
                   <select
                     className="input flex-1"
                     value={preview.mapping[i]}

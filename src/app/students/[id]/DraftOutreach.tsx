@@ -73,7 +73,7 @@ export default function DraftOutreach({ studentId }: { studentId: number }) {
     <div className="card space-y-4">
       <div className="flex items-baseline justify-between">
         <h2 className="font-semibold">Draft a message</h2>
-        <span className="text-xs text-black/50">Generated from this student&apos;s record.</span>
+        <span className="text-xs text-black/50 dark:text-white/50">Generated from this student&apos;s record.</span>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-4 gap-2">
@@ -101,7 +101,7 @@ export default function DraftOutreach({ studentId }: { studentId: number }) {
         </button>
         {error && <span className="text-sm text-red-600">{error}</span>}
         {explanation && !error && (
-          <span className="text-xs text-black/50 italic">{explanation}</span>
+          <span className="text-xs text-black/50 dark:text-white/50 italic">{explanation}</span>
         )}
       </div>
 

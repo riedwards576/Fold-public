@@ -169,7 +169,7 @@ export default function AskClient() {
       {result?.mode === "query" && (
         <>
           {result.explanation && (
-            <div className="text-sm text-black/60 italic">{result.explanation}</div>
+            <div className="text-sm text-black/60 dark:text-white/60 italic">{result.explanation}</div>
           )}
           <div className="card overflow-x-auto">
             <div className="flex items-center justify-between mb-2">
@@ -192,7 +192,7 @@ export default function AskClient() {
                     <td>{r.igHandle ? `@${r.igHandle}` : "—"}</td>
                   </tr>
                 ))}
-                {result.rows.length === 0 && <tr><td colSpan={5} className="text-center text-black/50 py-4">No matches.</td></tr>}
+                {result.rows.length === 0 && <tr><td colSpan={5} className="text-center text-black/50 dark:text-white/50 py-4">No matches.</td></tr>}
               </tbody>
             </table>
           </div>
@@ -202,7 +202,7 @@ export default function AskClient() {
       {result?.mode === "update" && (
         <>
           {result.explanation && (
-            <div className="text-sm text-black/60 italic">{result.explanation}</div>
+            <div className="text-sm text-black/60 dark:text-white/60 italic">{result.explanation}</div>
           )}
 
           {result.ambiguous.length > 0 && (
@@ -227,7 +227,7 @@ export default function AskClient() {
                       <Link href={`/students/${p.studentId}`} className="font-semibold hover:underline">
                         {before ? `${before.firstName} ${before.lastName ?? ""}`.trim() : `Student #${p.studentId}`}
                       </Link>
-                      <button onClick={() => setPreviews((prev) => prev.filter((_, idx) => idx !== i))} className="text-xs text-black/40 hover:text-red-600">skip</button>
+                      <button onClick={() => setPreviews((prev) => prev.filter((_, idx) => idx !== i))} className="text-xs text-black/40 dark:text-white/40 hover:text-red-600">skip</button>
                     </div>
                     <div className="overflow-x-auto">
                       <table className="text-sm">
@@ -241,14 +241,14 @@ export default function AskClient() {
                               : v;
                             return (
                               <tr key={k}>
-                                <td className="text-xs text-black/60 align-top">{FIELD_LABEL[k] ?? k}</td>
-                                <td className="align-top whitespace-pre-wrap text-black/50">{fmt(beforeVal)}</td>
+                                <td className="text-xs text-black/60 dark:text-white/60 align-top">{FIELD_LABEL[k] ?? k}</td>
+                                <td className="align-top whitespace-pre-wrap text-black/50 dark:text-white/50">{fmt(beforeVal)}</td>
                                 <td className="align-top whitespace-pre-wrap font-medium">{fmt(afterVal)}</td>
                               </tr>
                             );
                           })}
                           {patchEntries.length === 0 && (
-                            <tr><td colSpan={3} className="text-black/40 text-center">No changes proposed.</td></tr>
+                            <tr><td colSpan={3} className="text-black/40 dark:text-white/40 text-center">No changes proposed.</td></tr>
                           )}
                         </tbody>
                       </table>
@@ -271,7 +271,7 @@ export default function AskClient() {
                         <span className="chip bg-emerald-500/15 text-emerald-700 mr-2">new</span>
                         {`${c.firstName} ${(c as any).lastName ?? ""}`.trim()}
                       </span>
-                      <button onClick={() => setCreates((prev) => prev.filter((_, idx) => idx !== i))} className="text-xs text-black/40 hover:text-red-600">skip</button>
+                      <button onClick={() => setCreates((prev) => prev.filter((_, idx) => idx !== i))} className="text-xs text-black/40 dark:text-white/40 hover:text-red-600">skip</button>
                     </div>
                     <div className="overflow-x-auto">
                       <table className="text-sm">
@@ -279,7 +279,7 @@ export default function AskClient() {
                         <tbody>
                           {fields.map(([k, v]) => (
                             <tr key={k}>
-                              <td className="text-xs text-black/60">{FIELD_LABEL[k] ?? k}</td>
+                              <td className="text-xs text-black/60 dark:text-white/60">{FIELD_LABEL[k] ?? k}</td>
                               <td className="font-medium">{fmt(v)}</td>
                             </tr>
                           ))}
@@ -305,9 +305,9 @@ export default function AskClient() {
                       <Link href={`/students/${d.studentId}`} className="font-medium hover:underline">
                         {d.student ? `${d.student.firstName} ${d.student.lastName ?? ""}`.trim() : `Student #${d.studentId}`}
                       </Link>
-                      {d.reason && <span className="ml-2 text-xs text-black/50">{d.reason}</span>}
+                      {d.reason && <span className="ml-2 text-xs text-black/50 dark:text-white/50">{d.reason}</span>}
                     </div>
-                    <button onClick={() => setDeletes((prev) => prev.filter((_, idx) => idx !== i))} className="text-xs text-black/40 hover:text-red-700">keep</button>
+                    <button onClick={() => setDeletes((prev) => prev.filter((_, idx) => idx !== i))} className="text-xs text-black/40 dark:text-white/40 hover:text-red-700">keep</button>
                   </li>
                 ))}
               </ul>
@@ -337,7 +337,7 @@ export default function AskClient() {
           )}
 
           {previews.length === 0 && creates.length === 0 && deletes.length === 0 && result.ambiguous.length === 0 && (
-            <p className="text-sm text-black/50">
+            <p className="text-sm text-black/50 dark:text-white/50">
               Nothing found. Try e.g. "mark Kenzie as core member", "add Sarah Kim, sophomore", or "delete the duplicate entry".
             </p>
           )}

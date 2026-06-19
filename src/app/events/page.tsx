@@ -150,9 +150,9 @@ export default async function EventsPage() {
                 <td>
                   <Link href={`/events/${e.id}`} className="font-medium hover:underline">{e.name}</Link>
                 </td>
-                <td>{e.type ?? <span className="text-black/30">—</span>}</td>
+                <td>{e.type ?? <span className="text-black/30 dark:text-white/30">—</span>}</td>
                 <td>{new Date(e.startDate).toLocaleDateString()}</td>
-                <td>{e.location ?? <span className="text-black/30">—</span>}</td>
+                <td>{e.location ?? <span className="text-black/30 dark:text-white/30">—</span>}</td>
                 <td>{Number(count)}</td>
                 <td className="text-right">
                   <RowActions
@@ -164,7 +164,7 @@ export default async function EventsPage() {
               </tr>
             ))}
             {rows.length === 0 && (
-              <tr><td colSpan={6} className="text-center text-black/50 py-8">No events yet. Create one above.</td></tr>
+              <tr><td colSpan={6} className="text-center text-black/50 dark:text-white/50 py-8">No events yet. Create one above.</td></tr>
             )}
           </tbody>
         </table>
