@@ -18,6 +18,7 @@ export default function ImportClient() {
   const [error, setError] = useState("");
   const [busy, setBusy] = useState(false);
   const [result, setResult] = useState<{ created: number; updated: number } | null>(null);
+  const [sheetUrl, setSheetUrl] = useState("");
 
   async function onFile(f: File) {
     setError("");
@@ -37,6 +38,33 @@ export default function ImportClient() {
       const data = await r.json();
       if (!r.ok) throw new Error(data.error ?? "Failed");
       setPreview(data);
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "Failed");
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  async function loadSheet() {
+    setError("");
+    const match = sheetUrl.match(/\/spreadsheets\/d\/([a-zA-Z0-9_-]+)/);
+    if (!match) {
+      setError("Could not find a Google Sheets ID in that URL. Make sure it contains /spreadsheets/d/<id>.");
+      return;
+    }
+    const sheetId = match[1];
+    setBusy(true);
+    try {
+      const r = await fetch(`/api/fetch-sheet?sheetId=${encodeURIComponent(sheetId)}`, {
+        credentials: "same-origin",
+      });
+      if (!r.ok) {
+        const d = await r.json().catch(() => ({}));
+        throw new Error(d.error ?? "Failed to load sheet");
+      }
+      const text = await r.text();
+      setCsvText(text);
+      await preview_(text, undefined);
     } catch (e) {
       setError(e instanceof Error ? e.message : "Failed");
     } finally {
@@ -70,15 +98,48 @@ export default function ImportClient() {
   return (
     <div className="space-y-4">
       {!preview && !result && (
-        <label className="card flex items-center justify-center h-40 border-2 border-dashed border-black/15 dark:border-white/15 cursor-pointer hover:bg-black/5 dark:hover:bg-white/5">
-          <input
-            type="file"
-            accept=".csv,text/csv"
-            className="hidden"
-            onChange={(e) => e.target.files?.[0] && onFile(e.target.files[0])}
-          />
-          <span className="text-sm text-black/60">Click or drop a CSV here</span>
-        </label>
+        <>
+          {/* Google Sheets URL importer */}
+          <div className="card space-y-2">
+            <label className="block text-sm font-medium text-black/70 dark:text-white/70">
+              Or paste a Google Sheets URL
+            </label>
+            <div className="flex gap-2">
+              <input
+                type="url"
+                className="input flex-1"
+                placeholder="https://docs.google.com/spreadsheets/d/…"
+                value={sheetUrl}
+                onChange={(e) => setSheetUrl(e.target.value)}
+                disabled={busy}
+                onKeyDown={(e) => e.key === "Enter" && loadSheet()}
+              />
+              <button
+                className="btn-primary"
+                onClick={loadSheet}
+                disabled={busy || !sheetUrl.trim()}
+              >
+                {busy ? "Loading…" : "Load Sheet"}
+              </button>
+            </div>
+          </div>
+
+          <div className="flex items-center gap-3 text-xs text-black/40 dark:text-white/40">
+            <div className="flex-1 border-t border-black/10 dark:border-white/10" />
+            <span>or</span>
+            <div className="flex-1 border-t border-black/10 dark:border-white/10" />
+          </div>
+
+          <label className="card flex items-center justify-center h-40 border-2 border-dashed border-black/15 dark:border-white/15 cursor-pointer hover:bg-black/5 dark:hover:bg-white/5">
+            <input
+              type="file"
+              accept=".csv,text/csv"
+              className="hidden"
+              onChange={(e) => e.target.files?.[0] && onFile(e.target.files[0])}
+            />
+            <span className="text-sm text-black/60">Click or drop a CSV here</span>
+          </label>
+        </>
       )}
 
       {error && <p className="text-sm text-red-600">{error}</p>}

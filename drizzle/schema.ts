@@ -1,4 +1,4 @@
-import { sqliteTable, text, integer, uniqueIndex, type AnySQLiteColumn } from "drizzle-orm/sqlite-core";
+import { sqliteTable, text, integer, uniqueIndex, primaryKey, type AnySQLiteColumn } from "drizzle-orm/sqlite-core";
 import { sql } from "drizzle-orm";
 
 export const users = sqliteTable("users", {
@@ -274,3 +274,27 @@ export type NewVehicle = typeof vehicles.$inferInsert;
 export type RideSession = typeof rideSessions.$inferSelect;
 export type Ride = typeof rides.$inferSelect;
 export type RideAssignment = typeof rideAssignments.$inferSelect;
+
+// --- TAGS ---
+export const tags = sqliteTable("tags", {
+  id: integer("id").primaryKey({ autoIncrement: true }),
+  name: text("name").notNull().unique(),
+  color: text("color").notNull(),
+  createdAt: integer("created_at", { mode: "timestamp" })
+    .notNull()
+    .default(sql`(unixepoch())`),
+});
+
+export const studentTags = sqliteTable(
+  "student_tags",
+  {
+    studentId: integer("student_id")
+      .notNull()
+      .references(() => students.id, { onDelete: "cascade" }),
+    tagId: integer("tag_id")
+      .notNull()
+      .references(() => tags.id, { onDelete: "cascade" }),
+  },
+  (t) => ({ pk: primaryKey({ columns: [t.studentId, t.tagId] }) })
+);
+// --- /TAGS ---

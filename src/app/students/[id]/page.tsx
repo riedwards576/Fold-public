@@ -1,12 +1,13 @@
 import { notFound, redirect } from "next/navigation";
 import Link from "next/link";
 import { db } from "@/lib/db";
-import { students, attendances, events, contactAttempts, users } from "../../../../drizzle/schema";
-import { eq, desc, ne, asc } from "drizzle-orm";
+import { students, attendances, events, contactAttempts, users, tags, studentTags } from "../../../../drizzle/schema";
+import { eq, desc, asc } from "drizzle-orm";
 import StudentForm from "./StudentForm";
 import { parseStudent } from "@/lib/parse-student";
 import ContactLog from "./ContactLog";
 import DraftOutreach from "./DraftOutreach";
+import TagManager from "./TagManager";
 import type { FunnelStage } from "@/lib/funnel/types";
 import {
   perStudentHealth,
@@ -98,6 +99,16 @@ export default async function StudentPage({ params }: { params: Promise<{ id: st
     .map((fid) => rosterRows.find((r) => r.id === fid))
     .filter((r): r is (typeof rosterRows)[number] => !!r);
 
+  const studentTagRows = await db
+    .select({ id: tags.id, name: tags.name, color: tags.color })
+    .from(studentTags)
+    .innerJoin(tags, eq(tags.id, studentTags.tagId))
+    .where(eq(studentTags.studentId, id));
+
+  const allTagRows = await db
+    .select({ id: tags.id, name: tags.name, color: tags.color })
+    .from(tags);
+
   async function update(formData: FormData) {
     "use server";
     const data = parseStudent(formData);
@@ -124,6 +135,8 @@ export default async function StudentPage({ params }: { params: Promise<{ id: st
           <button className="btn-ghost text-red-600" type="submit">Delete</button>
         </form>
       </div>
+
+      <TagManager studentId={id} currentTags={studentTagRows} allTags={allTagRows} />
 
       <StudentForm action={update} student={s} roster={roster} />
 
