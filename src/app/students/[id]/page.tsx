@@ -1,19 +1,21 @@
 import { notFound, redirect } from "next/navigation";
 import Link from "next/link";
 import { db } from "@/lib/db";
-import { students, attendances, events, contactAttempts, users, tags, studentTags } from "../../../../drizzle/schema";
+import { students, attendances, events, contactAttempts, users, tags, studentTags, studentComments } from "../../../../drizzle/schema";
 import { eq, desc, asc } from "drizzle-orm";
 import StudentForm from "./StudentForm";
 import { parseStudent } from "@/lib/parse-student";
-import ContactLog from "./ContactLog";
 import DraftOutreach from "./DraftOutreach";
 import TagManager from "./TagManager";
-import type { FunnelStage } from "@/lib/funnel/types";
+import ActivityTimeline from "./ActivityTimeline";
+import NotesEditor from "./NotesEditor";
+import CommentsSection from "./CommentsSection";
 import {
   perStudentHealth,
   type StudentLite,
   type AttendanceLite,
 } from "@/lib/health-metrics";
+import { getCurrentUser } from "@/lib/auth";
 
 export const dynamic = "force-dynamic";
 
@@ -46,15 +48,28 @@ export default async function StudentPage({ params }: { params: Promise<{ id: st
     .where(eq(contactAttempts.studentId, id))
     .orderBy(desc(contactAttempts.attemptedAt));
 
-  const attempts = attemptRows.map((a) => ({
-    id: a.id,
-    channel: a.channel,
-    channelDetail: a.channelDetail,
-    attemptedAt: a.attemptedAt.toISOString(),
-    responded: a.responded,
-    notes: a.notes,
-    attemptedByDisplayName: a.byName ?? undefined,
-  }));
+  // Build unified activity timeline
+  type TimelineItem =
+    | { type: "attendance"; date: string; eventId: number; eventName: string }
+    | { type: "contact"; date: string; channel: string; channelDetail: string | null; responded: boolean; notes: string | null; byName: string | null };
+
+  const timelineItems: TimelineItem[] = [
+    ...history.map(({ a, e }) => ({
+      type: "attendance" as const,
+      date: e.startDate.toISOString(),
+      eventId: e.id,
+      eventName: e.name,
+    })),
+    ...attemptRows.map((a) => ({
+      type: "contact" as const,
+      date: a.attemptedAt.toISOString(),
+      channel: a.channel,
+      channelDetail: a.channelDetail,
+      responded: a.responded,
+      notes: a.notes,
+      byName: a.byName,
+    })),
+  ].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
 
   const rosterRows = await db
     .select({
@@ -109,6 +124,21 @@ export default async function StudentPage({ params }: { params: Promise<{ id: st
     .select({ id: tags.id, name: tags.name, color: tags.color })
     .from(tags);
 
+  // Comments
+  const commentRows = await db
+    .select({
+      id: studentComments.id,
+      content: studentComments.content,
+      createdAt: studentComments.createdAt,
+      byName: users.displayName,
+    })
+    .from(studentComments)
+    .leftJoin(users, eq(users.id, studentComments.userId))
+    .where(eq(studentComments.studentId, id))
+    .orderBy(asc(studentComments.createdAt));
+
+  const currentUser = await getCurrentUser();
+
   async function update(formData: FormData) {
     "use server";
     const data = parseStudent(formData);
@@ -139,6 +169,8 @@ export default async function StudentPage({ params }: { params: Promise<{ id: st
       <TagManager studentId={id} currentTags={studentTagRows} allTags={allTagRows} />
 
       <StudentForm action={update} student={s} roster={roster} />
+
+      <NotesEditor studentId={id} initialValue={s.notes ?? ""} />
 
       {myHealth && (
         <section className="card space-y-2 border-accent/20">
@@ -193,27 +225,18 @@ export default async function StudentPage({ params }: { params: Promise<{ id: st
 
       <DraftOutreach studentId={s.id} />
 
-      <ContactLog
-        studentId={s.id}
-        attempts={attempts}
-        currentStage={s.funnelStage as FunnelStage}
-      />
+      <ActivityTimeline items={timelineItems} />
 
-      <div className="card">
-        <h2 className="font-semibold mb-2">Attendance history ({history.length})</h2>
-        {history.length === 0 ? (
-          <p className="text-sm text-black/50">No events yet.</p>
-        ) : (
-          <ul className="space-y-1 text-sm">
-            {history.map(({ a, e }) => (
-              <li key={a.id} className="flex justify-between">
-                <Link href={`/events/${e.id}`} className="hover:underline">{e.name}</Link>
-                <span className="text-black/50">{new Date(e.startDate).toLocaleDateString("en-US", { timeZone: "UTC" })}</span>
-              </li>
-            ))}
-          </ul>
-        )}
-      </div>
+      <CommentsSection
+        studentId={id}
+        initialComments={commentRows.map((c) => ({
+          id: c.id,
+          content: c.content,
+          createdAt: c.createdAt.toISOString(),
+          byName: c.byName,
+        }))}
+        currentUserId={currentUser?.id ?? 0}
+      />
     </div>
   );
 }

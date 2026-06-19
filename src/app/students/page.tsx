@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { db } from "@/lib/db";
-import { students, attendances, contactAttempts, users, funnelSweepLog, tags, studentTags } from "../../../drizzle/schema";
-import { sql, eq, and, desc, inArray } from "drizzle-orm";
+import { students, attendances, events, contactAttempts, users, funnelSweepLog, tags, studentTags } from "../../../drizzle/schema";
+import { sql, eq, and, desc, inArray, asc } from "drizzle-orm";
 import type { FunnelStage } from "@/lib/funnel/types";
 import FunnelSweepButton from "../funnel/FunnelSweepButton";
 import RowActions from "../RowActions";
@@ -85,6 +85,40 @@ export default async function StudentsPage({
 
   // Fetch all tags for bulk-tag UI
   const allTagRows = await db.select({ id: tags.id, name: tags.name, color: tags.color }).from(tags);
+
+  // Sparklines: last 10 weeks of attendance
+  const now = new Date();
+  const tenWeeksAgo = new Date(now.getTime() - 10 * 7 * 24 * 60 * 60 * 1000);
+
+  function getWeekStart(d: Date): number {
+    const day = d.getDay(); // 0=Sun
+    const diff = (day === 0 ? -6 : 1 - day);
+    const monday = new Date(d);
+    monday.setHours(0, 0, 0, 0);
+    monday.setDate(d.getDate() + diff);
+    return monday.getTime();
+  }
+  const weekBuckets: number[] = [];
+  for (let i = 9; i >= 0; i--) {
+    const d = new Date(now.getTime() - i * 7 * 24 * 60 * 60 * 1000);
+    weekBuckets.push(getWeekStart(d));
+  }
+
+  const sparklineRows = rows.length > 0 ? await db
+    .select({ studentId: attendances.studentId, eventDate: events.startDate })
+    .from(attendances)
+    .innerJoin(events, eq(events.id, attendances.eventId))
+    .where(and(
+      inArray(attendances.studentId, rows.map(r => r.id)),
+      sql`${events.startDate} >= ${Math.floor(tenWeeksAgo.getTime() / 1000)}`
+    )) : [];
+
+  const sparklineMap = new Map<number, Set<number>>();
+  for (const row of sparklineRows) {
+    const ws = getWeekStart(new Date(row.eventDate));
+    if (!sparklineMap.has(row.studentId)) sparklineMap.set(row.studentId, new Set());
+    sparklineMap.get(row.studentId)!.add(ws);
+  }
 
   // Cold list: active students with no attendance in last 30 days
   const cutoff30 = Math.floor((Date.now() - 30 * 86400_000) / 1000);
@@ -223,6 +257,7 @@ export default async function StudentsPage({
             students={rows.map((r) => ({
               ...r,
               tags: studentTagMap.get(r.id) ?? [],
+              weeklyAttendance: weekBuckets.map(ws => sparklineMap.get(r.id)?.has(ws) ?? false),
             }))}
             allTags={allTagRows}
             deleteAction={deleteStudentAction}

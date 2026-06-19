@@ -5,6 +5,7 @@ import { events, attendances, students } from "../../../../drizzle/schema";
 import { eq, desc, and, lt, inArray } from "drizzle-orm";
 import AttendanceDumper from "./AttendanceDumper";
 import EventInsights from "./EventInsights";
+import EventNotesEditor from "./EventNotesEditor";
 
 export const dynamic = "force-dynamic";
 
@@ -107,6 +108,8 @@ export default async function EventPage({ params }: { params: Promise<{ id: stri
       </div>
 
       {present.length > 0 && <EventInsights eventId={eventId} stats={eventStats} />}
+
+      <EventNotesEditor eventId={eventId} initialValue={e.notes ?? ""} />
 
       <AttendanceDumper eventId={eventId} />
 

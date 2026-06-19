@@ -298,3 +298,13 @@ export const studentTags = sqliteTable(
   (t) => ({ pk: primaryKey({ columns: [t.studentId, t.tagId] }) })
 );
 // --- /TAGS ---
+
+// --- STUDENT COMMENTS ---
+export const studentComments = sqliteTable("student_comments", {
+  id: integer("id").primaryKey({ autoIncrement: true }),
+  studentId: integer("student_id").notNull().references(() => students.id, { onDelete: "cascade" }),
+  userId: integer("user_id").references(() => users.id, { onDelete: "set null" }),
+  content: text("content").notNull(),
+  createdAt: integer("created_at", { mode: "timestamp" }).notNull().default(sql`(unixepoch())`),
+});
+// --- /STUDENT COMMENTS ---

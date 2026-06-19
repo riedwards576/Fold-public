@@ -17,7 +17,21 @@ type StudentRow = {
   isActive: boolean;
   createdAt: Date;
   tags: { id: number; name: string; color: string }[];
+  weeklyAttendance: boolean[];
 };
+
+function Sparkline({ weeks }: { weeks: boolean[] }) {
+  return (
+    <span className="inline-flex items-end gap-px h-4">
+      {weeks.map((attended, i) => (
+        <span
+          key={i}
+          className={`w-1.5 rounded-sm ${attended ? "bg-accent h-4" : "bg-black/15 dark:bg-white/15 h-2"}`}
+        />
+      ))}
+    </span>
+  );
+}
 
 type Tag = { id: number; name: string; color: string };
 
@@ -28,7 +42,7 @@ type Props = {
 };
 
 // ── Column config ───────────────────────────────────────────────────────────
-type ColKey = "name" | "stage" | "year" | "gender" | "email" | "igHandle" | "active" | "tags" | "created";
+type ColKey = "name" | "stage" | "year" | "gender" | "email" | "igHandle" | "active" | "tags" | "created" | "attendance";
 
 type ColDef = {
   key: ColKey;
@@ -47,7 +61,8 @@ const COLUMNS: ColDef[] = [
   { key: "igHandle", label: "IG",      toggleable: true,  defaultOn: false, sortable: false },
   { key: "active",   label: "Active",  toggleable: true,  defaultOn: true,  sortable: false },
   { key: "tags",     label: "Tags",    toggleable: true,  defaultOn: true,  sortable: false },
-  { key: "created",  label: "Created", toggleable: true,  defaultOn: true,  sortable: true  },
+  { key: "created",    label: "Created",    toggleable: true,  defaultOn: true,  sortable: true  },
+  { key: "attendance", label: "Attendance", toggleable: true,  defaultOn: true,  sortable: false },
 ];
 
 const DEFAULT_VISIBILITY = Object.fromEntries(
@@ -577,6 +592,12 @@ export default function BulkStudentTable({ students, allTags, deleteAction }: Pr
                       return (
                         <td key={c.key} className="text-sm text-black/60 dark:text-white/60">
                           {new Date(s.createdAt).toLocaleDateString("en-US", { timeZone: "UTC" })}
+                        </td>
+                      );
+                    case "attendance":
+                      return (
+                        <td key={c.key}>
+                          <Sparkline weeks={s.weeklyAttendance} />
                         </td>
                       );
                     default:
