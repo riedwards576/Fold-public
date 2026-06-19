@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { db } from "@/lib/db";
-import { students, attendances, contactAttempts, users, funnelSweepLog, tags } from "../../../drizzle/schema";
-import { sql, eq, and, desc } from "drizzle-orm";
+import { students, attendances, contactAttempts, users, funnelSweepLog, tags, studentTags } from "../../../drizzle/schema";
+import { sql, eq, and, desc, inArray } from "drizzle-orm";
 import type { FunnelStage } from "@/lib/funnel/types";
 import FunnelSweepButton from "../funnel/FunnelSweepButton";
 import RowActions from "../RowActions";
@@ -63,6 +63,25 @@ export default async function StudentsPage({
   ]);
   const totalAll = Number(totalCountRows[0]?.c ?? 0);
   const totalPages = Math.max(1, Math.ceil(totalAll / PAGE_SIZE));
+
+  // Fetch tags per student for the All tab
+  const studentTagMap = new Map<number, { id: number; name: string; color: string }[]>();
+  if (rows.length > 0) {
+    const tagRows = await db
+      .select({
+        studentId: studentTags.studentId,
+        id: tags.id,
+        name: tags.name,
+        color: tags.color,
+      })
+      .from(studentTags)
+      .innerJoin(tags, eq(tags.id, studentTags.tagId))
+      .where(inArray(studentTags.studentId, rows.map((r) => r.id)));
+    for (const tr of tagRows) {
+      if (!studentTagMap.has(tr.studentId)) studentTagMap.set(tr.studentId, []);
+      studentTagMap.get(tr.studentId)!.push({ id: tr.id, name: tr.name, color: tr.color });
+    }
+  }
 
   // Fetch all tags for bulk-tag UI
   const allTagRows = await db.select({ id: tags.id, name: tags.name, color: tags.color }).from(tags);
@@ -175,19 +194,19 @@ export default async function StudentsPage({
       <div className="flex gap-1 border-b border-black/10 dark:border-white/10">
         <Link
           href="/students"
-          className={`px-3 py-2 text-sm border-b-2 -mb-px ${tab === "all" ? "border-accent font-medium" : "border-transparent text-black/60 hover:text-black"}`}
+          className={`px-3 py-2 text-sm border-b-2 -mb-px ${tab === "all" ? "border-accent font-medium" : "border-transparent text-black/60 dark:text-white/60 hover:text-black dark:hover:text-white"}`}
         >
           All ({totalAll})
         </Link>
         <Link
           href="/students?tab=cold"
-          className={`px-3 py-2 text-sm border-b-2 -mb-px ${tab === "cold" ? "border-accent font-medium" : "border-transparent text-black/60 hover:text-black"}`}
+          className={`px-3 py-2 text-sm border-b-2 -mb-px ${tab === "cold" ? "border-accent font-medium" : "border-transparent text-black/60 dark:text-white/60 hover:text-black dark:hover:text-white"}`}
         >
           Gone cold ({coldWithLast.length})
         </Link>
         <Link
           href="/students?tab=funnel"
-          className={`px-3 py-2 text-sm border-b-2 -mb-px ${tab === "funnel" ? "border-accent font-medium" : "border-transparent text-black/60 hover:text-black"}`}
+          className={`px-3 py-2 text-sm border-b-2 -mb-px ${tab === "funnel" ? "border-accent font-medium" : "border-transparent text-black/60 dark:text-white/60 hover:text-black dark:hover:text-white"}`}
         >
           Funnel
         </Link>
@@ -200,11 +219,18 @@ export default async function StudentsPage({
             <button className="btn-ghost border border-black/10 dark:border-white/10" type="submit">Search</button>
           </form>
 
-          <BulkStudentTable students={rows} allTags={allTagRows} deleteAction={deleteStudentAction} />
+          <BulkStudentTable
+            students={rows.map((r) => ({
+              ...r,
+              tags: studentTagMap.get(r.id) ?? [],
+            }))}
+            allTags={allTagRows}
+            deleteAction={deleteStudentAction}
+          />
 
           {totalPages > 1 && (
             <nav className="flex items-center justify-between text-sm">
-              <span className="text-black/60">
+              <span className="text-black/60 dark:text-white/60">
                 Page {page} of {totalPages} ({totalAll} total)
               </span>
               <div className="flex gap-2">
@@ -232,11 +258,11 @@ export default async function StudentsPage({
 
       {tab === "cold" && (
         <div className="card">
-          <p className="text-sm text-black/60 mb-3">
+          <p className="text-sm text-black/60 dark:text-white/60 mb-3">
             Active students who haven't shown up in the last 30 days, sorted oldest-first. Your follow-up queue.
           </p>
           {coldWithLast.length === 0 ? (
-            <p className="text-sm text-black/50">Nobody's cold.</p>
+            <p className="text-sm text-black/50 dark:text-white/50">Nobody's cold.</p>
           ) : (
             <table>
               <thead>
@@ -248,8 +274,8 @@ export default async function StudentsPage({
                     <td><Link href={`/students/${s.id}`} className="font-medium hover:underline">{s.firstName} {s.lastName ?? ""}</Link></td>
                     <td>{s.year ?? "—"}</td>
                     <td>{s.memberStatus ? <span className="chip">{s.memberStatus}</span> : "—"}</td>
-                    <td className="text-sm">{s.primaryContact ?? <span className="text-black/30">—</span>}</td>
-                    <td className="text-sm text-black/60">{s.lastSeen}</td>
+                    <td className="text-sm">{s.primaryContact ?? <span className="text-black/30 dark:text-white/30">—</span>}</td>
+                    <td className="text-sm text-black/60 dark:text-white/60">{s.lastSeen}</td>
                     <td className="text-right">
                       <RowActions
                         id={s.id}
@@ -292,7 +318,7 @@ export default async function StudentsPage({
             </div>
 
             <div className="flex flex-wrap gap-2 text-xs">
-              <span className="text-black/60 self-center">Quick filters:</span>
+              <span className="text-black/60 dark:text-white/60 self-center">Quick filters:</span>
               {FUNNEL_FILTERS.map((f) => (
                 <Link
                   key={f.key}
@@ -320,15 +346,15 @@ export default async function StudentsPage({
                       <tr key={s.id}>
                         <td><Link href={`/students/${s.id}`} className="hover:underline">{s.firstName} {s.lastName ?? ""}</Link></td>
                         <td><span className="chip">{STAGE_LABEL[s.funnelStage as FunnelStage]}</span></td>
-                        <td className="text-xs text-black/60">{s.firstMetContext ?? "—"}</td>
+                        <td className="text-xs text-black/60 dark:text-white/60">{s.firstMetContext ?? "—"}</td>
                         <td>
-                          {stat ? (<>{stat.count}{stat.lastResponded && <span className="ml-1 text-emerald-600">✓</span>}</>) : <span className="text-black/40">0</span>}
+                          {stat ? (<>{stat.count}{stat.lastResponded && <span className="ml-1 text-emerald-600">✓</span>}</>) : <span className="text-black/40 dark:text-white/40">0</span>}
                         </td>
-                        <td className="text-xs text-black/60">
+                        <td className="text-xs text-black/60 dark:text-white/60">
                           {leaders.slice(0, 3).map((id) => userById.get(id) ?? `#${id}`).join(", ")}
                           {leaders.length > 3 ? ` +${leaders.length - 3}` : ""}
                         </td>
-                        <td className="text-xs text-black/60">
+                        <td className="text-xs text-black/60 dark:text-white/60">
                           {last ? `${Math.floor((now - last.getTime()) / (24 * 60 * 60 * 1000))}d ago` : "—"}
                         </td>
                         <td className="text-right">
@@ -345,7 +371,7 @@ export default async function StudentsPage({
                     );
                   })}
                   {filtered.length === 0 && (
-                    <tr><td colSpan={7} className="text-center text-black/50 py-6">No students match this view.</td></tr>
+                    <tr><td colSpan={7} className="text-center text-black/50 dark:text-white/50 py-6">No students match this view.</td></tr>
                   )}
                 </tbody>
               </table>
@@ -361,22 +387,22 @@ export default async function StudentsPage({
                         <div>
                           <span className="chip mr-2">{s.triggeredBy}</span>
                           Flipped <strong>{s.flippedCount}</strong> to inactive
-                          <span className="text-black/50"> (evaluated {s.evaluated}, threshold {s.thresholdDays}d)</span>
+                          <span className="text-black/50 dark:text-white/50"> (evaluated {s.evaluated}, threshold {s.thresholdDays}d)</span>
                         </div>
                         {s.flippedCount > 0 && s.flipped?.length > 0 && (
-                          <div className="text-xs text-black/50">
+                          <div className="text-xs text-black/50 dark:text-white/50">
                             {s.flipped.slice(0, 8).map((f: any, i: number) => (
                               <span key={f.studentId}>
                                 {i > 0 ? ", " : ""}
                                 <Link href={`/students/${f.studentId}`} className="hover:underline">#{f.studentId}</Link>
-                                <span className="text-black/30"> ({f.from})</span>
+                                <span className="text-black/30 dark:text-white/30"> ({f.from})</span>
                               </span>
                             ))}
-                            {s.flipped.length > 8 && <span className="text-black/30"> +{s.flipped.length - 8} more</span>}
+                            {s.flipped.length > 8 && <span className="text-black/30 dark:text-white/30"> +{s.flipped.length - 8} more</span>}
                           </div>
                         )}
                       </div>
-                      <span className="text-xs text-black/50 whitespace-nowrap">{new Date(s.runAt).toLocaleString()}</span>
+                      <span className="text-xs text-black/50 dark:text-white/50 whitespace-nowrap">{new Date(s.runAt).toLocaleString()}</span>
                     </li>
                   ))}
                 </ul>
