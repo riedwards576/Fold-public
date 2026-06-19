@@ -1,11 +1,12 @@
 import Link from "next/link";
 import { db } from "@/lib/db";
-import { students, attendances, contactAttempts, users, funnelSweepLog } from "../../../drizzle/schema";
+import { students, attendances, contactAttempts, users, funnelSweepLog, tags } from "../../../drizzle/schema";
 import { sql, eq, and, desc } from "drizzle-orm";
 import type { FunnelStage } from "@/lib/funnel/types";
 import FunnelSweepButton from "../funnel/FunnelSweepButton";
 import RowActions from "../RowActions";
 import { deleteStudentAction } from "./actions";
+import BulkStudentTable from "./BulkStudentTable";
 
 export const dynamic = "force-dynamic";
 
@@ -62,6 +63,9 @@ export default async function StudentsPage({
   ]);
   const totalAll = Number(totalCountRows[0]?.c ?? 0);
   const totalPages = Math.max(1, Math.ceil(totalAll / PAGE_SIZE));
+
+  // Fetch all tags for bulk-tag UI
+  const allTagRows = await db.select({ id: tags.id, name: tags.name, color: tags.color }).from(tags);
 
   // Cold list: active students with no attendance in last 30 days
   const cutoff30 = Math.floor((Date.now() - 30 * 86400_000) / 1000);
@@ -196,48 +200,7 @@ export default async function StudentsPage({
             <button className="btn-ghost border border-black/10 dark:border-white/10" type="submit">Search</button>
           </form>
 
-          <div className="card overflow-x-auto">
-            <table>
-              <thead>
-                <tr>
-                  <th>Name</th>
-                  <th>Year</th>
-                  <th>Status</th>
-                  <th>IG</th>
-                  <th>Active</th>
-                  <th>Contact</th>
-                  <th></th>
-                </tr>
-              </thead>
-              <tbody>
-                {rows.map((s) => (
-                  <tr key={s.id} className="hover:bg-black/5 dark:hover:bg-white/5">
-                    <td>
-                      <Link href={`/students/${s.id}`} className="font-medium hover:underline">
-                        {s.firstName} {s.lastName ?? ""}
-                      </Link>
-                      <div className="text-xs text-black/50">{s.gender ? (s.gender === "M" ? "♂" : "♀") : ""}</div>
-                    </td>
-                    <td>{s.year ?? <span className="text-black/30">—</span>}</td>
-                    <td>{s.memberStatus ? <span className="chip">{s.memberStatus}</span> : <span className="text-black/30">—</span>}</td>
-                    <td>{s.igHandle ? <span className="text-black/70">@{s.igHandle}</span> : <span className="text-black/30">—</span>}</td>
-                    <td>{s.isActive ? "✓" : <span className="text-black/30">—</span>}</td>
-                    <td className="text-sm">{s.primaryContact ?? <span className="text-black/30">—</span>}</td>
-                    <td className="text-right">
-                      <RowActions
-                        id={s.id}
-                        deleteAction={deleteStudentAction}
-                        confirmMessage={`Delete ${s.firstName} ${s.lastName ?? ""}? This also removes their attendance and contact history. This can't be undone.`}
-                      />
-                    </td>
-                  </tr>
-                ))}
-                {rows.length === 0 && (
-                  <tr><td colSpan={7} className="text-center text-black/50 py-8">No students yet. Try <Link className="underline" href="/import">/import</Link>.</td></tr>
-                )}
-              </tbody>
-            </table>
-          </div>
+          <BulkStudentTable students={rows} allTags={allTagRows} deleteAction={deleteStudentAction} />
 
           {totalPages > 1 && (
             <nav className="flex items-center justify-between text-sm">
