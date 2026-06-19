@@ -36,7 +36,9 @@ export default async function SignupPage({
         const [nameVal, ...parts] = cookie.split("; ");
         const eqIdx = nameVal.indexOf("=");
         const name = nameVal.slice(0, eqIdx);
-        const value = nameVal.slice(eqIdx + 1);
+        const rawValue = nameVal.slice(eqIdx + 1);
+        let value = rawValue;
+        try { value = decodeURIComponent(rawValue); } catch { value = rawValue; }
         const opts: Record<string, string | boolean | number> = {};
         for (const p of parts) {
           const [k, v] = p.split("=");
