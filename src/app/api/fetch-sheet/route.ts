@@ -22,7 +22,14 @@ export async function GET(req: Request) {
     return NextResponse.json({ error: "could not extract sheet id from url" }, { status: 400 });
   }
 
-  const exportUrl = `https://docs.google.com/spreadsheets/d/${sheetId}/export?format=csv`;
+  // Extract tab gid from URL fragment (#gid=…) or query param
+  let gid: string | null = null;
+  if (url) {
+    const gidMatch = url.match(/[#&?]gid=(\d+)/);
+    gid = gidMatch ? gidMatch[1] : null;
+  }
+
+  const exportUrl = `https://docs.google.com/spreadsheets/d/${sheetId}/export?format=csv${gid ? `&gid=${gid}` : ""}`;
 
   let res: Response;
   try {
@@ -32,12 +39,17 @@ export async function GET(req: Request) {
   }
 
   if (!res.ok) {
-    return NextResponse.json({ error: "sheet fetch returned non-ok status" }, { status: 400 });
+    return NextResponse.json({
+      error: "Could not access this sheet. Make sure it is shared as \"Anyone with the link\" → Viewer, then try again.",
+    }, { status: 400 });
   }
 
   const contentType = res.headers.get("content-type") ?? "";
   if (!contentType.includes("text") && !contentType.includes("csv")) {
-    return NextResponse.json({ error: "unexpected content type from sheet" }, { status: 400 });
+    // Google redirected to a login page — sheet is private
+    return NextResponse.json({
+      error: "This sheet appears to be private. In Google Sheets, click Share → change to \"Anyone with the link\" → Viewer, then try again.",
+    }, { status: 400 });
   }
 
   const csvText = await res.text();

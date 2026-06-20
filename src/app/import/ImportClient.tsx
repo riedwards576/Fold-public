@@ -102,8 +102,12 @@ export default function ImportClient() {
           {/* Google Sheets URL importer */}
           <div className="card space-y-2">
             <label className="block text-sm font-medium text-black/70 dark:text-white/70">
-              Or paste a Google Sheets URL
+              Paste a Google Sheets URL
             </label>
+            <p className="text-xs text-black/50 dark:text-white/50">
+              The sheet must be shared as <strong className="text-black/70 dark:text-white/70">Anyone with the link → Viewer</strong> (no Google login required).
+              In Google Sheets: <em>Share → Change to anyone with the link</em>.
+            </p>
             <div className="flex gap-2">
               <input
                 type="url"
