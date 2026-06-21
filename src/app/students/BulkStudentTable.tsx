@@ -4,6 +4,7 @@ import { useState, useRef, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import RowActions from "../RowActions";
+import BulkEditModal from "./BulkEditModal";
 
 type StudentRow = {
   id: number;
@@ -327,7 +328,7 @@ export default function BulkStudentTable({ students, allTags, deleteAction }: Pr
     }
   }
 
-  async function bulkEdit(patch: { isActive?: boolean; year?: string }) {
+  async function bulkEdit(patch: Record<string, unknown>) {
     setBusy(true);
     setError("");
     setSuccess("");
@@ -342,12 +343,10 @@ export default function BulkStudentTable({ students, allTags, deleteAction }: Pr
         const d = await r.json();
         throw new Error(d.error ?? "Failed");
       }
+      const count = selected.size;
       setSelected(new Set());
       setEditPanel(false);
-      const label = patch.isActive !== undefined
-        ? `Marked ${selected.size} student${selected.size !== 1 ? "s" : ""} ${patch.isActive ? "active" : "inactive"}.`
-        : `Updated year for ${selected.size} student${selected.size !== 1 ? "s" : ""}.`;
-      setSuccess(label);
+      setSuccess(`Updated ${count} student${count !== 1 ? "s" : ""}.`);
       router.refresh();
       setTimeout(() => setSuccess(""), 4000);
     } catch (e) {
@@ -665,6 +664,16 @@ export default function BulkStudentTable({ students, allTags, deleteAction }: Pr
         </table>
       </div>
 
+      {/* ── Bulk edit modal ──────────────────────────────────────────────── */}
+      {editPanel && (
+        <BulkEditModal
+          count={selected.size}
+          busy={busy}
+          onApply={bulkEdit}
+          onClose={() => setEditPanel(false)}
+        />
+      )}
+
       {/* ── Fixed bottom bar ─────────────────────────────────────────────── */}
       {selected.size > 0 && (
         <div className="fixed bottom-0 left-0 right-0 z-50 border-t border-white/10 bg-zinc-900 dark:bg-zinc-950 text-white px-4 py-3">
@@ -730,58 +739,14 @@ export default function BulkStudentTable({ students, allTags, deleteAction }: Pr
             </button>
 
             {/* ── Bulk edit ── */}
-            {!editPanel ? (
-              <button
-                type="button"
-                onClick={() => { setEditPanel(true); setConfirmDelete(false); }}
-                disabled={busy}
-                className="shrink-0 rounded-md border border-white/20 px-3 py-1.5 text-sm text-white/80 hover:text-white hover:bg-white/10 disabled:opacity-40"
-              >
-                Edit fields
-              </button>
-            ) : (
-              <span className="flex items-center gap-2 flex-wrap shrink-0">
-                <span className="text-sm text-white/70">Set:</span>
-                <button
-                  type="button"
-                  onClick={() => bulkEdit({ isActive: true })}
-                  disabled={busy}
-                  className="rounded-md bg-emerald-600 px-3 py-1.5 text-sm font-medium text-white hover:bg-emerald-700 disabled:opacity-40"
-                >
-                  Active
-                </button>
-                <button
-                  type="button"
-                  onClick={() => bulkEdit({ isActive: false })}
-                  disabled={busy}
-                  className="rounded-md border border-white/20 px-3 py-1.5 text-sm text-white/70 hover:text-white hover:bg-white/10 disabled:opacity-40"
-                >
-                  Inactive
-                </button>
-                <select
-                  className="rounded-md border border-white/20 bg-zinc-800 text-white px-2 py-1.5 text-sm focus:outline-none focus:ring-1 focus:ring-white/40"
-                  defaultValue=""
-                  disabled={busy}
-                  onChange={(e) => { if (e.target.value) bulkEdit({ year: e.target.value }); e.target.value = ""; }}
-                >
-                  <option value="" disabled>Set year…</option>
-                  <option value="freshman">Freshman</option>
-                  <option value="sophomore">Sophomore</option>
-                  <option value="junior">Junior</option>
-                  <option value="senior">Senior</option>
-                  <option value="grad">Grad</option>
-                  <option value="postgrad">PostGrad</option>
-                </select>
-                <button
-                  type="button"
-                  onClick={() => setEditPanel(false)}
-                  disabled={busy}
-                  className="rounded-md border border-white/20 px-3 py-1.5 text-sm text-white/50 hover:text-white hover:bg-white/10"
-                >
-                  Cancel
-                </button>
-              </span>
-            )}
+            <button
+              type="button"
+              onClick={() => { setEditPanel(true); setConfirmDelete(false); }}
+              disabled={busy}
+              className="shrink-0 rounded-md border border-white/20 px-3 py-1.5 text-sm text-white/80 hover:text-white hover:bg-white/10 disabled:opacity-40"
+            >
+              Edit fields
+            </button>
 
             {!confirmDelete ? (
               <button
