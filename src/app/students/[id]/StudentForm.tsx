@@ -25,7 +25,7 @@ export default function StudentForm({
           defaultValue={s.year ?? ""}
           options={[
             ["", "—"], ["freshman", "Freshman"], ["sophomore", "Sophomore"],
-            ["junior", "Junior"], ["senior", "Senior"], ["grad", "Grad"], ["other", "Other"],
+            ["junior", "Junior"], ["senior", "Senior"], ["grad", "Grad"], ["postgrad", "PostGrad"],
           ]}
         />
       </div>

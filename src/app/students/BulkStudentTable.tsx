@@ -71,7 +71,7 @@ const DEFAULT_VISIBILITY = Object.fromEntries(
 
 // ── Year sort order ─────────────────────────────────────────────────────────
 const YEAR_ORDER: Record<string, number> = {
-  freshman: 0, sophomore: 1, junior: 2, senior: 3, grad: 4,
+  freshman: 0, sophomore: 1, junior: 2, senior: 3, grad: 4, postgrad: 5,
 };
 
 function yearRank(y: string | null): number {
@@ -120,10 +120,10 @@ function sortStudents(students: StudentRow[], sort: SortState): StudentRow[] {
 }
 
 // ── Year filter chips ───────────────────────────────────────────────────────
-const YEAR_CHIPS = ["freshman", "sophomore", "junior", "senior", "grad"] as const;
+const YEAR_CHIPS = ["freshman", "sophomore", "junior", "senior", "grad", "postgrad"] as const;
 type YearChip = (typeof YEAR_CHIPS)[number];
 const YEAR_LABEL: Record<YearChip, string> = {
-  freshman: "Freshman", sophomore: "Sophomore", junior: "Junior", senior: "Senior", grad: "Grad",
+  freshman: "Freshman", sophomore: "Sophomore", junior: "Junior", senior: "Senior", grad: "Grad", postgrad: "PostGrad",
 };
 
 // ── Active filter ───────────────────────────────────────────────────────────

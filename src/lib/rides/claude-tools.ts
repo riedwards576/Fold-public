@@ -82,7 +82,7 @@ export const PROPOSE_RIDE_PLAN_TOOL: Anthropic.Tool = {
             gender: { type: "string", enum: ["M", "F"] },
             year: {
               type: "string",
-              enum: ["freshman", "sophomore", "junior", "senior", "grad", "other"],
+              enum: ["freshman", "sophomore", "junior", "senior", "grad", "postgrad"],
             },
             phone: { type: "string" },
             notes: { type: "string" },

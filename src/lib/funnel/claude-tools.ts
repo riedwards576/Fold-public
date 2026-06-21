@@ -24,7 +24,7 @@ export const PARSE_INTAKE_TOOL: Anthropic.Tool = {
             gender: { type: "string", enum: ["M", "F"] },
             year: {
               type: "string",
-              enum: ["freshman", "sophomore", "junior", "senior", "grad", "other"],
+              enum: ["freshman", "sophomore", "junior", "senior", "grad", "postgrad"],
             },
             igHandle: { type: "string", description: "Instagram handle without @" },
             phone: { type: "string" },

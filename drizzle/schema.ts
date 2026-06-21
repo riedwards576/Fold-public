@@ -88,7 +88,7 @@ export const students = sqliteTable("students", {
   lastName: text("last_name"),
   studentId: text("student_id"),
   gender: text("gender", { enum: ["M", "F"] }),
-  year: text("year", { enum: ["freshman", "sophomore", "junior", "senior", "grad", "other"] }),
+  year: text("year", { enum: ["freshman", "sophomore", "junior", "senior", "grad", "postgrad"] }),
   phone: text("phone"),
   email: text("email"),
   igHandle: text("ig_handle"),

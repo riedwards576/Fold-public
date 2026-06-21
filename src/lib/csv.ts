@@ -115,13 +115,14 @@ export function coerce(field: SchemaField, raw: string): unknown {
       return null;
     }
     case "year": {
-      const u = v.toLowerCase();
-      if (u.includes("fresh") || u === "1") return "freshman";
-      if (u.includes("soph") || u === "2") return "sophomore";
-      if (u.includes("jun") || u === "3") return "junior";
-      if (u.includes("sen") || u === "4") return "senior";
-      if (u.includes("grad")) return "grad";
-      return "other";
+      const u = v.toLowerCase().trim();
+      if (u.includes("fresh") || u === "1" || u === "fr") return "freshman";
+      if (u.includes("soph") || u === "2" || u === "so") return "sophomore";
+      if (u.includes("jun") || u === "3" || u === "jr") return "junior";
+      if (u.includes("sen") || u === "4" || u === "sr") return "senior";
+      if (u === "grad" || u === "5" || u === "g") return "grad";
+      if (u.includes("postgrad") || u.includes("post grad") || u.includes("post-grad") || u === "pg") return "postgrad";
+      return "postgrad"; // any unrecognised input → postgrad
     }
     case "isActive":
     case "contactedViaIg": {

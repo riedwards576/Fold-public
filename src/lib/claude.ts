@@ -30,7 +30,7 @@ export const PARSE_ATTENDANCE_TOOL: Anthropic.Tool = {
             gender: { type: "string", enum: ["M", "F"] },
             year: {
               type: "string",
-              enum: ["freshman", "sophomore", "junior", "senior", "grad", "other"],
+              enum: ["freshman", "sophomore", "junior", "senior", "grad", "postgrad"],
             },
             igHandle: { type: "string", description: "Instagram handle without @" },
             memberStatus: { type: "string", enum: ["prospect", "member", "core"] },
@@ -94,7 +94,7 @@ export const PROPOSE_EVENT_BATCH_TOOL: Anthropic.Tool = {
             gender: { type: "string", enum: ["M", "F"] },
             year: {
               type: "string",
-              enum: ["freshman", "sophomore", "junior", "senior", "grad", "other"],
+              enum: ["freshman", "sophomore", "junior", "senior", "grad", "postgrad"],
             },
             igHandle: { type: "string" },
             memberStatus: { type: "string", enum: ["prospect", "member", "core"] },
@@ -177,7 +177,7 @@ export const UPDATE_STUDENTS_TOOL: Anthropic.Tool = {
                 gender: { type: "string", enum: ["M", "F"] },
                 year: {
                   type: "string",
-                  enum: ["freshman", "sophomore", "junior", "senior", "grad", "other"],
+                  enum: ["freshman", "sophomore", "junior", "senior", "grad", "postgrad"],
                 },
                 phone: { type: "string" },
                 email: { type: "string" },
@@ -220,7 +220,7 @@ export const UPDATE_STUDENTS_TOOL: Anthropic.Tool = {
             gender: { type: "string", enum: ["M", "F"] },
             year: {
               type: "string",
-              enum: ["freshman", "sophomore", "junior", "senior", "grad", "other"],
+              enum: ["freshman", "sophomore", "junior", "senior", "grad", "postgrad"],
             },
             phone: { type: "string" },
             email: { type: "string" },
@@ -296,7 +296,7 @@ export const NL_QUERY_TOOL: Anthropic.Tool = {
             type: "array",
             items: {
               type: "string",
-              enum: ["freshman", "sophomore", "junior", "senior", "grad", "other"],
+              enum: ["freshman", "sophomore", "junior", "senior", "grad", "postgrad"],
             },
           },
           memberStatus: {
