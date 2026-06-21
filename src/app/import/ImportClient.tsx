@@ -47,15 +47,14 @@ export default function ImportClient() {
 
   async function loadSheet() {
     setError("");
-    const match = sheetUrl.match(/\/spreadsheets\/d\/([a-zA-Z0-9_-]+)/);
-    if (!match) {
+    if (!sheetUrl.match(/\/spreadsheets\/d\/([a-zA-Z0-9_-]+)/)) {
       setError("Could not find a Google Sheets ID in that URL. Make sure it contains /spreadsheets/d/<id>.");
       return;
     }
-    const sheetId = match[1];
     setBusy(true);
     try {
-      const r = await fetch(`/api/fetch-sheet?sheetId=${encodeURIComponent(sheetId)}`, {
+      // Pass the full URL so the server can extract both the sheet ID and the tab gid (#gid=…)
+      const r = await fetch(`/api/fetch-sheet?url=${encodeURIComponent(sheetUrl)}`, {
         credentials: "same-origin",
       });
       if (!r.ok) {
