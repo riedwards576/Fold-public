@@ -84,7 +84,7 @@ export default function BulkEditModal({ count, busy, onApply, onClose }: Props) 
       className="fixed inset-0 z-50 bg-black/60 flex items-center justify-center"
       onClick={(e) => { if (e.target === e.currentTarget) onClose(); }}
     >
-      <div className="card max-w-lg w-full max-h-[85vh] overflow-y-auto p-6 space-y-4 mx-4">
+      <div className="max-w-lg w-full max-h-[85vh] overflow-y-auto p-6 space-y-4 mx-4 rounded-xl border border-black/10 dark:border-white/10 bg-white dark:bg-zinc-900 shadow-xl">
         {/* Header */}
         <div className="flex items-center justify-between">
           <h2 className="text-base font-semibold">
