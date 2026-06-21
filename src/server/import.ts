@@ -42,7 +42,19 @@ export async function processImport(input: {
     if (!data.firstName) continue;
 
     let existing: { id: number } | undefined;
-    if (data.email) {
+
+    // 1. Phone
+    if (!existing && data.phone) {
+      const r = await db
+        .select({ id: students.id })
+        .from(students)
+        .where(eq(students.phone, String(data.phone)))
+        .limit(1);
+      existing = r[0];
+    }
+
+    // 2. Email
+    if (!existing && data.email) {
       const r = await db
         .select({ id: students.id })
         .from(students)
@@ -50,14 +62,17 @@ export async function processImport(input: {
         .limit(1);
       existing = r[0];
     }
-    if (!existing && data.lastName) {
+
+    // 3. First name + Last name + Year
+    if (!existing && data.firstName && data.lastName && data.year) {
       const r = await db
         .select({ id: students.id })
         .from(students)
         .where(
           and(
             sql`lower(first_name) = ${String(data.firstName).toLowerCase()}`,
-            sql`lower(coalesce(last_name, '')) = ${String(data.lastName).toLowerCase()}`
+            sql`lower(coalesce(last_name, '')) = ${String(data.lastName).toLowerCase()}`,
+            eq(students.year, String(data.year) as never)
           )
         )
         .limit(1);
