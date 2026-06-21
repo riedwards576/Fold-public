@@ -16,8 +16,7 @@ export default function StudentForm({
         <Field label="First name" name="firstName" defaultValue={s.firstName ?? ""} required />
         <Field label="Last name" name="lastName" defaultValue={s.lastName ?? ""} />
       </div>
-      <div className="grid grid-cols-3 gap-3">
-        <Field label="Student ID" name="studentId" defaultValue={s.studentId ?? ""} />
+      <div className="grid grid-cols-2 gap-3">
         <Select label="Gender" name="gender" defaultValue={s.gender ?? ""} options={[["", "—"], ["M", "Male"], ["F", "Female"]]} />
         <Select
           label="Year"

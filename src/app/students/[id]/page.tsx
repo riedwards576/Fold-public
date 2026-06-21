@@ -5,10 +5,8 @@ import { students, attendances, events, contactAttempts, users, tags, studentTag
 import { eq, desc, asc } from "drizzle-orm";
 import StudentForm from "./StudentForm";
 import { parseStudent } from "@/lib/parse-student";
-import DraftOutreach from "./DraftOutreach";
 import TagManager from "./TagManager";
 import ActivityTimeline from "./ActivityTimeline";
-import NotesEditor from "./NotesEditor";
 import CommentsSection from "./CommentsSection";
 import {
   perStudentHealth,
@@ -170,8 +168,6 @@ export default async function StudentPage({ params }: { params: Promise<{ id: st
 
       <StudentForm action={update} student={s} roster={roster} />
 
-      <NotesEditor studentId={id} initialValue={s.notes ?? ""} />
-
       {myHealth && (
         <section className="card space-y-2 border-accent/20">
           <div className="flex items-baseline justify-between">
@@ -222,8 +218,6 @@ export default async function StudentPage({ params }: { params: Promise<{ id: st
           )}
         </section>
       )}
-
-      <DraftOutreach studentId={s.id} />
 
       <ActivityTimeline items={timelineItems} />
 
