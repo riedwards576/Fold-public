@@ -140,6 +140,7 @@ export default function BulkStudentTable({ students, allTags, deleteAction }: Pr
   const [success, setSuccess] = useState("");
   const [error, setError] = useState("");
   const [confirmDelete, setConfirmDelete] = useState(false);
+  const [editPanel, setEditPanel] = useState(false);
 
   // Column visibility
   const [colVisible, setColVisible] = useState<Record<ColKey, boolean>>(DEFAULT_VISIBILITY);
@@ -317,6 +318,36 @@ export default function BulkStudentTable({ students, allTags, deleteAction }: Pr
       setSelected(new Set());
       setConfirmDelete(false);
       setSuccess(`Deleted ${count} student${count !== 1 ? "s" : ""}.`);
+      router.refresh();
+      setTimeout(() => setSuccess(""), 4000);
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "Failed");
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  async function bulkEdit(patch: { isActive?: boolean; year?: string }) {
+    setBusy(true);
+    setError("");
+    setSuccess("");
+    try {
+      const r = await fetch("/api/students/bulk-edit", {
+        method: "POST",
+        credentials: "same-origin",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ studentIds: Array.from(selected), ...patch }),
+      });
+      if (!r.ok) {
+        const d = await r.json();
+        throw new Error(d.error ?? "Failed");
+      }
+      setSelected(new Set());
+      setEditPanel(false);
+      const label = patch.isActive !== undefined
+        ? `Marked ${selected.size} student${selected.size !== 1 ? "s" : ""} ${patch.isActive ? "active" : "inactive"}.`
+        : `Updated year for ${selected.size} student${selected.size !== 1 ? "s" : ""}.`;
+      setSuccess(label);
       router.refresh();
       setTimeout(() => setSuccess(""), 4000);
     } catch (e) {
@@ -698,10 +729,64 @@ export default function BulkStudentTable({ students, allTags, deleteAction }: Pr
               {busy ? "Applying…" : "Apply tag"}
             </button>
 
+            {/* ── Bulk edit ── */}
+            {!editPanel ? (
+              <button
+                type="button"
+                onClick={() => { setEditPanel(true); setConfirmDelete(false); }}
+                disabled={busy}
+                className="shrink-0 rounded-md border border-white/20 px-3 py-1.5 text-sm text-white/80 hover:text-white hover:bg-white/10 disabled:opacity-40"
+              >
+                Edit fields
+              </button>
+            ) : (
+              <span className="flex items-center gap-2 flex-wrap shrink-0">
+                <span className="text-sm text-white/70">Set:</span>
+                <button
+                  type="button"
+                  onClick={() => bulkEdit({ isActive: true })}
+                  disabled={busy}
+                  className="rounded-md bg-emerald-600 px-3 py-1.5 text-sm font-medium text-white hover:bg-emerald-700 disabled:opacity-40"
+                >
+                  Active
+                </button>
+                <button
+                  type="button"
+                  onClick={() => bulkEdit({ isActive: false })}
+                  disabled={busy}
+                  className="rounded-md border border-white/20 px-3 py-1.5 text-sm text-white/70 hover:text-white hover:bg-white/10 disabled:opacity-40"
+                >
+                  Inactive
+                </button>
+                <select
+                  className="rounded-md border border-white/20 bg-zinc-800 text-white px-2 py-1.5 text-sm focus:outline-none focus:ring-1 focus:ring-white/40"
+                  defaultValue=""
+                  disabled={busy}
+                  onChange={(e) => { if (e.target.value) bulkEdit({ year: e.target.value }); e.target.value = ""; }}
+                >
+                  <option value="" disabled>Set year…</option>
+                  <option value="freshman">Freshman</option>
+                  <option value="sophomore">Sophomore</option>
+                  <option value="junior">Junior</option>
+                  <option value="senior">Senior</option>
+                  <option value="grad">Grad</option>
+                  <option value="postgrad">PostGrad</option>
+                </select>
+                <button
+                  type="button"
+                  onClick={() => setEditPanel(false)}
+                  disabled={busy}
+                  className="rounded-md border border-white/20 px-3 py-1.5 text-sm text-white/50 hover:text-white hover:bg-white/10"
+                >
+                  Cancel
+                </button>
+              </span>
+            )}
+
             {!confirmDelete ? (
               <button
                 type="button"
-                onClick={() => setConfirmDelete(true)}
+                onClick={() => { setConfirmDelete(true); setEditPanel(false); }}
                 disabled={busy}
                 className="shrink-0 rounded-md bg-red-600 px-3 py-1.5 text-sm font-medium text-white hover:bg-red-700 disabled:opacity-40"
               >
